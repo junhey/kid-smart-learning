@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import alphabetData from "@/data/english/alphabet.json";
 import wordsData from "@/data/english/words.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
@@ -121,28 +122,16 @@ export default function PhonicsGame() {
 
   if (gameOver) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.6 }}
-          className="text-center"
-        >
-          <div className="text-8xl mb-4">🔤</div>
-          <h2 className="text-4xl font-black text-blue-600 mb-2">Fantastic!</h2>
-          <p className="text-2xl text-gray-600">
-            {correct}/{TOTAL_ROUNDS} correct!
-          </p>
-        </motion.div>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => { reset(); setGameOver(false); nextQuestion(); }}
-          className="btn-kid bg-gradient-to-b from-blue-400 to-blue-500 border-blue-700 text-white px-10"
-        >
-          Play Again! 🔤
-        </motion.button>
-      </div>
+      <GameResult
+        correct={correct}
+        total={TOTAL_ROUNDS}
+        onRestart={() => {
+          reset();
+          setGameOver(false);
+          nextQuestion();
+        }}
+        onBack={() => window.history.back()}
+      />
     );
   }
 

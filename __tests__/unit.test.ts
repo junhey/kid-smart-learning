@@ -49,17 +49,17 @@ describe('gameUtils', () => {
   describe('buildOptions', () => {
     it('includes the correct answer', () => {
       const pool = ['apple', 'banana', 'cherry', 'date', 'elderberry'];
-      const options = buildOptions('apple', pool, 4);
+      const options = buildOptions('apple', pool, 4, (x) => x);
       expect(options).toContain('apple');
     });
     it('returns requested count of options', () => {
       const pool = ['a', 'b', 'c', 'd', 'e'];
-      const options = buildOptions('a', pool, 4);
+      const options = buildOptions('a', pool, 4, (x) => x);
       expect(options).toHaveLength(4);
     });
     it('has no duplicate options', () => {
       const pool = ['a', 'b', 'c', 'd', 'e'];
-      const options = buildOptions('a', pool, 4);
+      const options = buildOptions('a', pool, 4, (x) => x);
       expect(new Set(options).size).toBe(4);
     });
   });
