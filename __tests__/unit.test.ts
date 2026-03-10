@@ -41,7 +41,7 @@ describe('gameUtils', () => {
   describe('pickRandom', () => {
     it('returns element from array', () => {
       const arr = ['cat', 'dog', 'bird'];
-      const result = pickRandom(arr);
+      const result = pickRandom(arr, 1)[0];
       expect(arr).toContain(result);
     });
   });
