@@ -18,5 +18,10 @@
   { "number": 17, "english": "seventeen", "chinese": "十七", "emoji": "⑰" },
   { "number": 18, "english": "eighteen", "chinese": "十八", "emoji": "⑱" },
   { "number": 19, "english": "nineteen", "chinese": "十九", "emoji": "⑲" },
-  { "number": 20, "english": "twenty", "chinese": "二十", "emoji": "⑳" }
+  { "number": 20, "english": "twenty", "chinese": "二十", "emoji": "⑳" },
+  { "number": 30, "english": "thirty", "chinese": "三十", "emoji": "🔢" },
+  { "number": 40, "english": "forty", "chinese": "四十", "emoji": "🔢" },
+  { "number": 50, "english": "fifty", "chinese": "五十", "emoji": "🔢" },
+  { "number": 60, "english": "sixty", "chinese": "六十", "emoji": "🔢" },
+  { "number": 100, "english": "one hundred", "chinese": "一百", "emoji": "💯" }
 ]
