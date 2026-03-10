@@ -62,5 +62,29 @@
     "description": "5 equal sides and 5 corners",
     "color": "#F97316",
     "svgPath": "pentagon"
+  },
+  {
+    "name": "hexagon",
+    "emoji": "⬡",
+    "sides": 6,
+    "description": "6 equal sides like a honeycomb",
+    "color": "#FBBF24",
+    "svgPath": "hexagon"
+  },
+  {
+    "name": "octagon",
+    "emoji": "⯄",
+    "sides": 8,
+    "description": "8 sides like a stop sign",
+    "color": "#EF4444",
+    "svgPath": "octagon"
+  },
+  {
+    "name": "oval",
+    "emoji": "🥚",
+    "sides": 0,
+    "description": "Egg shape, stretched circle",
+    "color": "#A7F3D0",
+    "svgPath": "oval"
   }
 ]
