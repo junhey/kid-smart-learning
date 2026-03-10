@@ -1,0 +1,50 @@
+{
+  "rhymeGroups": [
+    {
+      "sound": "at",
+      "words": [
+        { "word": "cat", "emoji": "🐱" },
+        { "word": "hat", "emoji": "🎩" },
+        { "word": "bat", "emoji": "🦇" },
+        { "word": "mat", "emoji": "🧘" },
+        { "word": "rat", "emoji": "🐀" }
+      ]
+    },
+    {
+      "sound": "og",
+      "words": [
+        { "word": "dog", "emoji": "🐕" },
+        { "word": "log", "emoji": "🪵" },
+        { "word": "frog", "emoji": "🐸" },
+        { "word": "fog", "emoji": "🌫️" }
+      ]
+    },
+    {
+      "sound": "un",
+      "words": [
+        { "word": "sun", "emoji": "☀️" },
+        { "word": "run", "emoji": "🏃" },
+        { "word": "fun", "emoji": "🎉" },
+        { "word": "bun", "emoji": "🥐" }
+      ]
+    },
+    {
+      "sound": "ing",
+      "words": [
+        { "word": "ring", "emoji": "💍" },
+        { "word": "sing", "emoji": "🎤" },
+        { "word": "king", "emoji": "🤴" },
+        { "word": "wing", "emoji": "🪽" }
+      ]
+    },
+    {
+      "sound": "ay",
+      "words": [
+        { "word": "day", "emoji": "📅" },
+        { "word": "play", "emoji": "🎮" },
+        { "word": "say", "emoji": "💬" },
+        { "word": "way", "emoji": "🛣️" }
+      ]
+    }
+  ]
+}
