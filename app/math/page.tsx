@@ -7,6 +7,7 @@ import AdditionGame from "@/components/games/math/AdditionGame";
 import ShapeMatch from "@/components/games/math/ShapeMatch";
 import CompareNumbers from "@/components/games/math/CompareNumbers";
 import MathShooter from "@/components/games/math/MathShooter";
+import ShapeCount from "@/components/games/math/ShapeCount";
 import Navigation from "@/components/layout/Navigation";
 
 const games = [
@@ -49,6 +50,14 @@ const games = [
     description: "Shoot the correct answer bubble!",
     color: "from-pink-400 to-rose-500",
     component: MathShooter,
+  },
+  {
+    id: "shapecount",
+    title: "Count Shapes",
+    emoji: "🔷",
+    description: "How many shapes can you count?",
+    color: "from-indigo-400 to-purple-500",
+    component: ShapeCount,
   },
 ];
 
