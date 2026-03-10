@@ -80,6 +80,16 @@
     { "word": "balloon", "emoji": "🎈" },
     { "word": "clock", "emoji": "🕐" },
     { "word": "phone", "emoji": "📱" },
-    { "word": "pencil", "emoji": "✏️" }
+    { "word": "pencil", "emoji": "✏️" },
+    { "word": "chair", "emoji": "🪑" },
+    { "word": "table", "emoji": "🪑" },
+    { "word": "bed", "emoji": "🛏️" },
+    { "word": "door", "emoji": "🚪" },
+    { "word": "window", "emoji": "🪟" },
+    { "word": "cup", "emoji": "☕" },
+    { "word": "plate", "emoji": "🍽️" },
+    { "word": "spoon", "emoji": "🥄" },
+    { "word": "key", "emoji": "🔑" },
+    { "word": "bag", "emoji": "🎒" }
   ]
 }
