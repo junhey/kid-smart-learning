@@ -131,8 +131,20 @@ button {
 
 /* Game card */
 .game-card {
-  @apply rounded-3xl p-6 shadow-xl cursor-pointer
-    transition-all duration-200 hover:scale-105 active:scale-95;
+  @apply rounded-[2rem] p-8 cursor-pointer
+    transition-all duration-300 hover:scale-105 active:scale-95
+    border-b-8 border-opacity-30;
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.15),
+    0 20px 50px -10px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.game-card:hover {
+  box-shadow: 
+    0 15px 40px -5px rgba(0, 0, 0, 0.2),
+    0 25px 60px -10px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 /* Answer button styles */
