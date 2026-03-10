@@ -8,6 +8,7 @@ import WordMatch from "@/components/games/english/WordMatch";
 import PhonicsGame from "@/components/games/english/PhonicsGame";
 import ListenAndChoose from "@/components/games/english/ListenAndChoose";
 import SentenceBuilder from "@/components/games/english/SentenceBuilder";
+import ColorPaint from "@/components/games/english/ColorPaint";
 import Navigation from "@/components/layout/Navigation";
 
 const games = [
@@ -50,6 +51,14 @@ const games = [
     description: "Build sentences with words!",
     color: "from-yellow-400 to-orange-400",
     component: SentenceBuilder,
+  },
+  {
+    id: "colorpaint",
+    title: "Color Paint",
+    emoji: "🎨",
+    description: "Paint objects with colors!",
+    color: "from-pink-400 to-purple-400",
+    component: ColorPaint,
   },
 ];
 
