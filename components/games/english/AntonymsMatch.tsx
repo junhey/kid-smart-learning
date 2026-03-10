@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import antonymsData from "@/src/data/antonyms.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
 
@@ -47,6 +48,10 @@ export default function AntonymsMatch() {
   const { playCorrectSound, playWrongSound } = useSound();
   const { correct, recordCorrect, reset } = useProgress(TOTAL_ROUNDS);
 
+  const handleBack = () => {
+    window.location.href = "/";
+  };
+
   const nextRound = useCallback(() => {
     if (roundRef.current >= TOTAL_ROUNDS) {
       setGameOver(true);
@@ -86,22 +91,12 @@ export default function AntonymsMatch() {
 
   if (gameOver) {
     return (
-      <div className="flex flex-col items-center justify-center h-full space-y-6">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="text-center"
-        >
-          <h2 className="text-4xl font-bold mb-4">🎉 游戏结束！</h2>
-          <p className="text-2xl">正确：{correct} / {TOTAL_ROUNDS}</p>
-        </motion.div>
-        <button
-          onClick={handleRestart}
-          className="px-8 py-4 text-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl hover:scale-105 transition-transform"
-        >
-          再玩一次
-        </button>
-      </div>
+      <GameResult
+        correct={correct}
+        total={TOTAL_ROUNDS}
+        onRestart={handleRestart}
+        onBack={handleBack}
+      />
     );
   }
 
