@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import wordsData from "@/data/english/words.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
 
@@ -96,30 +97,17 @@ export default function WordMatch() {
 
   if (gameOver) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.6 }}
-          className="text-center"
-        >
-          <div className="text-8xl mb-4">🌟</div>
-          <h2 className="text-4xl font-black text-green-600 mb-2">
-            Well Done!
-          </h2>
-          <p className="text-2xl text-gray-600">
-            Score: {correct}/{TOTAL_ROUNDS}
-          </p>
-        </motion.div>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => { reset(); roundRef.current = 0; setGameOver(false); nextQuestion(); }}
-          className="btn-kid bg-gradient-to-b from-green-400 to-green-500 border-green-700 text-white px-10"
-        >
-          Play Again! 🐶
-        </motion.button>
-      </div>
+      <GameResult
+        correct={correct}
+        total={TOTAL_ROUNDS}
+        onRestart={() => {
+          reset();
+          roundRef.current = 0;
+          setGameOver(false);
+          nextQuestion();
+        }}
+        onBack={() => window.location.href = "/"}
+      />
     );
   }
 
