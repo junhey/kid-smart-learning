@@ -2,7 +2,7 @@
 
 An interactive, gamified learning website for children ages 5-7, featuring fun English and Math games with a star-based reward system.
 
-**Live Demo:** [kid-smart-learning.vercel.app](https://kid-smart-learning.vercel.app) *(deploy to get your URL)*
+**Live Demo:** [kid-smart-learning.vercel.app](https://kid-smart-learning-em5eci9lj-junheys-projects.vercel.app) *(deploy to get your URL)*
 
 ---
 
