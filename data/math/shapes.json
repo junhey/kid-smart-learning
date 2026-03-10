@@ -1,0 +1,66 @@
+[
+  {
+    "name": "circle",
+    "emoji": "⭕",
+    "sides": 0,
+    "description": "Round with no corners",
+    "color": "#FF6B6B",
+    "svgPath": "circle"
+  },
+  {
+    "name": "square",
+    "emoji": "⬛",
+    "sides": 4,
+    "description": "4 equal sides and 4 corners",
+    "color": "#4DD0E1",
+    "svgPath": "square"
+  },
+  {
+    "name": "triangle",
+    "emoji": "🔺",
+    "sides": 3,
+    "description": "3 sides and 3 corners",
+    "color": "#FFB84D",
+    "svgPath": "triangle"
+  },
+  {
+    "name": "rectangle",
+    "emoji": "▬",
+    "sides": 4,
+    "description": "4 sides, longer than a square",
+    "color": "#81C784",
+    "svgPath": "rectangle"
+  },
+  {
+    "name": "star",
+    "emoji": "⭐",
+    "sides": 5,
+    "description": "5 points like a star",
+    "color": "#FFE066",
+    "svgPath": "star"
+  },
+  {
+    "name": "heart",
+    "emoji": "❤️",
+    "sides": 0,
+    "description": "Heart shape for love",
+    "color": "#FF6B6B",
+    "svgPath": "heart"
+  },
+  {
+    "name": "diamond",
+    "emoji": "🔷",
+    "sides": 4,
+    "description": "4 sides like a diamond",
+    "color": "#A78BFA",
+    "svgPath": "diamond"
+  },
+  {
+    "name": "pentagon",
+    "emoji": "⬠",
+    "sides": 5,
+    "description": "5 equal sides and 5 corners",
+    "color": "#F97316",
+    "svgPath": "pentagon"
+  }
+]

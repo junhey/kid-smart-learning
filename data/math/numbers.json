@@ -1,0 +1,22 @@
+[
+  { "number": 1, "english": "one", "chinese": "一", "emoji": "1️⃣" },
+  { "number": 2, "english": "two", "chinese": "二", "emoji": "2️⃣" },
+  { "number": 3, "english": "three", "chinese": "三", "emoji": "3️⃣" },
+  { "number": 4, "english": "four", "chinese": "四", "emoji": "4️⃣" },
+  { "number": 5, "english": "five", "chinese": "五", "emoji": "5️⃣" },
+  { "number": 6, "english": "six", "chinese": "六", "emoji": "6️⃣" },
+  { "number": 7, "english": "seven", "chinese": "七", "emoji": "7️⃣" },
+  { "number": 8, "english": "eight", "chinese": "八", "emoji": "8️⃣" },
+  { "number": 9, "english": "nine", "chinese": "九", "emoji": "9️⃣" },
+  { "number": 10, "english": "ten", "chinese": "十", "emoji": "🔟" },
+  { "number": 11, "english": "eleven", "chinese": "十一", "emoji": "⑪" },
+  { "number": 12, "english": "twelve", "chinese": "十二", "emoji": "⑫" },
+  { "number": 13, "english": "thirteen", "chinese": "十三", "emoji": "⑬" },
+  { "number": 14, "english": "fourteen", "chinese": "十四", "emoji": "⑭" },
+  { "number": 15, "english": "fifteen", "chinese": "十五", "emoji": "⑮" },
+  { "number": 16, "english": "sixteen", "chinese": "十六", "emoji": "⑯" },
+  { "number": 17, "english": "seventeen", "chinese": "十七", "emoji": "⑰" },
+  { "number": 18, "english": "eighteen", "chinese": "十八", "emoji": "⑱" },
+  { "number": 19, "english": "nineteen", "chinese": "十九", "emoji": "⑲" },
+  { "number": 20, "english": "twenty", "chinese": "二十", "emoji": "⑳" }
+]

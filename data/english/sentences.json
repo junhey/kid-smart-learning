@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "words": ["The", "cat", "is", "big"],
+    "answer": "The cat is big",
+    "emoji": "🐱"
+  },
+  {
+    "id": 2,
+    "words": ["I", "like", "apples"],
+    "answer": "I like apples",
+    "emoji": "🍎"
+  },
+  {
+    "id": 3,
+    "words": ["The", "dog", "runs", "fast"],
+    "answer": "The dog runs fast",
+    "emoji": "🐶"
+  },
+  {
+    "id": 4,
+    "words": ["She", "has", "a", "ball"],
+    "answer": "She has a ball",
+    "emoji": "⚽"
+  },
+  {
+    "id": 5,
+    "words": ["We", "love", "school"],
+    "answer": "We love school",
+    "emoji": "🏫"
+  },
+  {
+    "id": 6,
+    "words": ["The", "sun", "is", "yellow"],
+    "answer": "The sun is yellow",
+    "emoji": "☀️"
+  },
+  {
+    "id": 7,
+    "words": ["He", "eats", "a", "banana"],
+    "answer": "He eats a banana",
+    "emoji": "🍌"
+  },
+  {
+    "id": 8,
+    "words": ["Birds", "can", "fly"],
+    "answer": "Birds can fly",
+    "emoji": "🐦"
+  },
+  {
+    "id": 9,
+    "words": ["I", "see", "a", "rainbow"],
+    "answer": "I see a rainbow",
+    "emoji": "🌈"
+  },
+  {
+    "id": 10,
+    "words": ["The", "fish", "swims", "fast"],
+    "answer": "The fish swims fast",
+    "emoji": "🐟"
+  },
+  {
+    "id": 11,
+    "words": ["My", "mom", "is", "kind"],
+    "answer": "My mom is kind",
+    "emoji": "👩"
+  },
+  {
+    "id": 12,
+    "words": ["I", "have", "a", "kite"],
+    "answer": "I have a kite",
+    "emoji": "🪁"
+  },
+  {
+    "id": 13,
+    "words": ["The", "moon", "is", "bright"],
+    "answer": "The moon is bright",
+    "emoji": "🌙"
+  },
+  {
+    "id": 14,
+    "words": ["We", "play", "in", "the", "park"],
+    "answer": "We play in the park",
+    "emoji": "🌳"
+  },
+  {
+    "id": 15,
+    "words": ["I", "love", "my", "family"],
+    "answer": "I love my family",
+    "emoji": "👨‍👩‍👧‍👦"
+  },
+  {
+    "id": 16,
+    "words": ["The", "rabbit", "hops", "high"],
+    "answer": "The rabbit hops high",
+    "emoji": "🐰"
+  },
+  {
+    "id": 17,
+    "words": ["Stars", "shine", "at", "night"],
+    "answer": "Stars shine at night",
+    "emoji": "⭐"
+  },
+  {
+    "id": 18,
+    "words": ["I", "drink", "juice"],
+    "answer": "I drink juice",
+    "emoji": "🧃"
+  },
+  {
+    "id": 19,
+    "words": ["The", "bear", "is", "brown"],
+    "answer": "The bear is brown",
+    "emoji": "🐻"
+  },
+  {
+    "id": 20,
+    "words": ["She", "reads", "a", "book"],
+    "answer": "She reads a book",
+    "emoji": "📚"
+  },
+  {
+    "id": 21,
+    "words": ["The", "frog", "is", "green"],
+    "answer": "The frog is green",
+    "emoji": "🐸"
+  },
+  {
+    "id": 22,
+    "words": ["I", "can", "run", "fast"],
+    "answer": "I can run fast",
+    "emoji": "🏃"
+  },
+  {
+    "id": 23,
+    "words": ["The", "flower", "is", "pink"],
+    "answer": "The flower is pink",
+    "emoji": "🌸"
+  },
+  {
+    "id": 24,
+    "words": ["He", "likes", "to", "sing"],
+    "answer": "He likes to sing",
+    "emoji": "🎵"
+  },
+  {
+    "id": 25,
+    "words": ["The", "elephant", "is", "big"],
+    "answer": "The elephant is big",
+    "emoji": "🐘"
+  },
+  {
+    "id": 26,
+    "words": ["I", "eat", "strawberries"],
+    "answer": "I eat strawberries",
+    "emoji": "🍓"
+  },
+  {
+    "id": 27,
+    "words": ["The", "sky", "is", "blue"],
+    "answer": "The sky is blue",
+    "emoji": "🌤️"
+  },
+  {
+    "id": 28,
+    "words": ["Monkeys", "love", "bananas"],
+    "answer": "Monkeys love bananas",
+    "emoji": "🐵"
+  },
+  {
+    "id": 29,
+    "words": ["I", "sleep", "at", "night"],
+    "answer": "I sleep at night",
+    "emoji": "😴"
+  },
+  {
+    "id": 30,
+    "words": ["The", "lion", "is", "strong"],
+    "answer": "The lion is strong",
+    "emoji": "🦁"
+  }
+]
