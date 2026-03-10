@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import rhymesData from "@/data/english/rhymes.json";
 import { shuffleArray, pickRandom, pickRandomOne } from "@/lib/gameUtils";
 
@@ -80,9 +81,7 @@ export default function RhymeGame() {
       setTimeout(() => setShowStar(false), 1000);
       recordCorrect();
       setTimeout(() => {
-        if (total < 4) {
-          generateQuestion();
-        }
+        generateQuestion();
       }, 1500);
     } else {
       playWrongSound();
@@ -91,6 +90,14 @@ export default function RhymeGame() {
         setIsCorrect(null);
       }, 1000);
     }
+  };
+
+  const handleRestart = () => {
+    window.location.reload();
+  };
+
+  const handleBack = () => {
+    window.location.href = "/";
   };
 
   if (!question) return null;
@@ -155,23 +162,12 @@ export default function RhymeGame() {
         {showStar && <StarReward show={showStar} />}
 
         {isComplete && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8 p-6 bg-white rounded-2xl shadow-xl text-center"
-          >
-            <div className="text-5xl mb-4">🎉</div>
-            <div className="text-2xl font-bold text-purple-600 mb-2">
-              Amazing Work!
-            </div>
-            <div className="text-gray-600">You found all the rhymes!</div>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-6 py-3 bg-purple-500 text-white rounded-full font-bold hover:bg-purple-600 transition-colors"
-            >
-              Play Again
-            </button>
-          </motion.div>
+          <GameResult
+            correct={correct}
+            total={total}
+            onRestart={handleRestart}
+            onBack={handleBack}
+          />
         )}
       </div>
     </div>
