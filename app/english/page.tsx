@@ -9,6 +9,7 @@ import PhonicsGame from "@/components/games/english/PhonicsGame";
 import ListenAndChoose from "@/components/games/english/ListenAndChoose";
 import SentenceBuilder from "@/components/games/english/SentenceBuilder";
 import ColorPaint from "@/components/games/english/ColorPaint";
+import AntonymsMatch from "@/components/games/english/AntonymsMatch";
 import Navigation from "@/components/layout/Navigation";
 
 const games = [
@@ -59,6 +60,14 @@ const games = [
     description: "Paint objects with colors!",
     color: "from-pink-400 to-purple-400",
     component: ColorPaint,
+  },
+  {
+    id: "antonyms",
+    title: "Antonyms Match",
+    emoji: "🔄",
+    description: "Find the opposite words!",
+    color: "from-cyan-400 to-blue-400",
+    component: AntonymsMatch,
   },
 ];
 
