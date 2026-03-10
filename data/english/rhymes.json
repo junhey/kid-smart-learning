@@ -45,6 +45,51 @@
         { "word": "say", "emoji": "💬" },
         { "word": "way", "emoji": "🛣️" }
       ]
+    },
+    {
+      "sound": "all",
+      "words": [
+        { "word": "ball", "emoji": "⚽" },
+        { "word": "call", "emoji": "📞" },
+        { "word": "fall", "emoji": "🍂" },
+        { "word": "wall", "emoji": "🧱" }
+      ]
+    },
+    {
+      "sound": "ake",
+      "words": [
+        { "word": "cake", "emoji": "🎂" },
+        { "word": "lake", "emoji": "🏞️" },
+        { "word": "make", "emoji": "🔨" },
+        { "word": "snake", "emoji": "🐍" }
+      ]
+    },
+    {
+      "sound": "ow",
+      "words": [
+        { "word": "cow", "emoji": "🐄" },
+        { "word": "now", "emoji": "⏰" },
+        { "word": "how", "emoji": "❓" },
+        { "word": "wow", "emoji": "😲" }
+      ]
+    },
+    {
+      "sound": "ip",
+      "words": [
+        { "word": "ship", "emoji": "🚢" },
+        { "word": "flip", "emoji": "🤸" },
+        { "word": "trip", "emoji": "🧳" },
+        { "word": "chip", "emoji": "🍟" }
+      ]
+    },
+    {
+      "sound": "eet",
+      "words": [
+        { "word": "feet", "emoji": "👣" },
+        { "word": "meet", "emoji": "🤝" },
+        { "word": "sweet", "emoji": "🍬" },
+        { "word": "street", "emoji": "🛣️" }
+      ]
     }
   ]
 }
