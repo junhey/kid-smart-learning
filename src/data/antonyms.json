@@ -1,0 +1,17 @@
+[
+  { "word": "big", "antonym": "small" },
+  { "word": "hot", "antonym": "cold" },
+  { "word": "happy", "antonym": "sad" },
+  { "word": "fast", "antonym": "slow" },
+  { "word": "light", "antonym": "dark" },
+  { "word": "day", "antonym": "night" },
+  { "word": "old", "antonym": "young" },
+  { "word": "up", "antonym": "down" },
+  { "word": "in", "antonym": "out" },
+  { "word": "open", "antonym": "close" },
+  { "word": "start", "antonym": "stop" },
+  { "word": "good", "antonym": "bad" },
+  { "word": "full", "antonym": "empty" },
+  { "word": "easy", "antonym": "hard" },
+  { "word": "clean", "antonym": "dirty" }
+]
