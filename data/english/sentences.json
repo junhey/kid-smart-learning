@@ -178,5 +178,35 @@
     "words": ["The", "lion", "is", "strong"],
     "answer": "The lion is strong",
     "emoji": "🦁"
+  },
+  {
+    "id": 31,
+    "words": ["Good", "morning", "mom"],
+    "answer": "Good morning mom",
+    "emoji": "🌅"
+  },
+  {
+    "id": 32,
+    "words": ["Please", "help", "me"],
+    "answer": "Please help me",
+    "emoji": "🙏"
+  },
+  {
+    "id": 33,
+    "words": ["Thank", "you", "very", "much"],
+    "answer": "Thank you very much",
+    "emoji": "💝"
+  },
+  {
+    "id": 34,
+    "words": ["I", "wash", "my", "hands"],
+    "answer": "I wash my hands",
+    "emoji": "🧼"
+  },
+  {
+    "id": 35,
+    "words": ["Let's", "go", "home"],
+    "answer": "Let's go home",
+    "emoji": "🏠"
   }
 ]
