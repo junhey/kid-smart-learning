@@ -8,6 +8,7 @@ import ShapeMatch from "@/components/games/math/ShapeMatch";
 import CompareNumbers from "@/components/games/math/CompareNumbers";
 import MathShooter from "@/components/games/math/MathShooter";
 import ShapeCount from "@/components/games/math/ShapeCount";
+import ClockGame from "@/components/games/math/ClockGame";
 import Navigation from "@/components/layout/Navigation";
 
 const games = [
@@ -58,6 +59,14 @@ const games = [
     description: "How many shapes can you count?",
     color: "from-indigo-400 to-purple-500",
     component: ShapeCount,
+  },
+  {
+    id: "clock",
+    title: "Clock Time",
+    emoji: "⏰",
+    description: "Tell the time on the clock!",
+    color: "from-yellow-400 to-orange-500",
+    component: ClockGame,
   },
 ];
 
