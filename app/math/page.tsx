@@ -10,6 +10,7 @@ import MathShooter from "@/components/games/math/MathShooter";
 import ShapeCount from "@/components/games/math/ShapeCount";
 import ClockGame from "@/components/games/math/ClockGame";
 import Navigation from "@/components/layout/Navigation";
+import { GameCard } from "@/components/ui/GameCard";
 
 const games = [
   {
@@ -104,32 +105,37 @@ export default function MathPage() {
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        {games.map((game, index) => (
-          <motion.div
-            key={game.id}
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, type: "spring", bounce: 0.4 }}
-            whileHover={{ scale: 1.05, y: -5 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setActiveGame(game.id)}
-            className={`game-card bg-gradient-to-br ${game.color} text-white cursor-pointer`}
-          >
-            <div className="text-6xl mb-3 text-center">{game.emoji}</div>
-            <h3 className="text-2xl font-black text-center mb-2">
-              {game.title}
-            </h3>
-            <p className="text-center text-white/90 font-semibold">
-              {game.description}
-            </p>
+        {games.map((game, index) => {
+          // 为数学游戏分配variant
+          const variantOptions = ['default', 'info', 'primary'] as const;
+          const variant = variantOptions[index % variantOptions.length];
+          
+          return (
             <motion.div
-              className="mt-4 bg-white/20 rounded-xl py-2 text-center font-bold"
-              whileHover={{ backgroundColor: "rgba(255,255,255,0.35)" }}
+              key={game.id}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, type: "spring", bounce: 0.4 }}
+              onClick={() => setActiveGame(game.id)}
             >
-              Play Now! 🎮
+              <GameCard
+                title={game.title}
+                description={game.description}
+                icon={game.emoji}
+                variant={variant}
+                className="cursor-pointer hover:scale-105"
+              >
+                <motion.div
+                  className="mt-4 bg-white text-gray-800 rounded-xl py-2 text-center font-bold font-['Fredoka']"
+                  whileHover={{ backgroundColor: "#FFC800" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Play Now! 🎮
+                </motion.div>
+              </GameCard>
             </motion.div>
-          </motion.div>
-        ))}
+          );
+        })}
       </div>
 
       <motion.div

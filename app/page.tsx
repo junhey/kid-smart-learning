@@ -87,11 +87,19 @@ export default function HomePage() {
                 title="English 英语"
                 description="字母、单词、自然拼读"
                 icon="📚"
+                variant="primary"
                 className="hover:scale-105 transition-transform cursor-pointer"
               >
                 <div className="flex justify-center gap-3 mb-4">
                   {["🔤", "🐶", "🍎", "👂", "✍️"].map((e, i) => (
-                    <span key={i} className="text-3xl">{e}</span>
+                    <motion.span
+                      key={i}
+                      className="text-4xl"
+                      animate={{ y: [0, -8, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
+                    >
+                      {e}
+                    </motion.span>
                   ))}
                 </div>
                 <Button variant="primary" size="lg" fullWidth>
@@ -111,11 +119,19 @@ export default function HomePage() {
                 title="Math 数学"
                 description="数数、加法、图形"
                 icon="🔢"
+                variant="success"
                 className="hover:scale-105 transition-transform cursor-pointer"
               >
                 <div className="flex justify-center gap-3 mb-4">
                   {["🔢", "➕", "🔷", "⚖️", "🎯"].map((e, i) => (
-                    <span key={i} className="text-3xl">{e}</span>
+                    <motion.span
+                      key={i}
+                      className="text-4xl"
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
+                    >
+                      {e}
+                    </motion.span>
                   ))}
                 </div>
                 <Button variant="success" size="lg" fullWidth>
