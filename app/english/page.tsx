@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import AlphabetBalloon from "@/components/games/english/AlphabetBalloon";
@@ -11,62 +10,58 @@ import SentenceBuilder from "@/components/games/english/SentenceBuilder";
 import ColorPaint from "@/components/games/english/ColorPaint";
 import AntonymsMatch from "@/components/games/english/AntonymsMatch";
 import Navigation from "@/components/layout/Navigation";
+import { GameCard } from "@/components/ui/GameCard";
+import { Button } from "@/components/ui/Button";
+import { Mascot, mascotMessages } from "@/components/Mascot";
 
 const games = [
   {
     id: "alphabet",
-    title: "Alphabet Balloons",
+    title: "字母气球",
     emoji: "🎈",
-    description: "Pop the right letter balloon!",
-    color: "from-orange-400 to-red-400",
+    description: "戳对字母气球！",
     component: AlphabetBalloon,
   },
   {
     id: "wordmatch",
-    title: "Word Match",
+    title: "单词配对",
     emoji: "🐶",
-    description: "Match pictures to words!",
-    color: "from-green-400 to-teal-400",
+    description: "图片和单词配对！",
     component: WordMatch,
   },
   {
     id: "phonics",
-    title: "Phonics Fun",
+    title: "自然拼读",
     emoji: "🔤",
-    description: "Find what starts with the letter!",
-    color: "from-blue-400 to-indigo-400",
+    description: "找出对应开头的单词！",
     component: PhonicsGame,
   },
   {
     id: "listen",
-    title: "Listen & Choose",
+    title: "听音选择",
     emoji: "👂",
-    description: "Hear the word and pick it!",
-    color: "from-purple-400 to-pink-400",
+    description: "听单词选图片！",
     component: ListenAndChoose,
   },
   {
     id: "sentence",
-    title: "Sentence Builder",
+    title: "造句游戏",
     emoji: "✍️",
-    description: "Build sentences with words!",
-    color: "from-yellow-400 to-orange-400",
+    description: "用单词组句子！",
     component: SentenceBuilder,
   },
   {
     id: "colorpaint",
-    title: "Color Paint",
+    title: "颜色涂色",
     emoji: "🎨",
-    description: "Paint objects with colors!",
-    color: "from-pink-400 to-purple-400",
+    description: "给物体涂颜色！",
     component: ColorPaint,
   },
   {
     id: "antonyms",
-    title: "Antonyms Match",
+    title: "反义词配对",
     emoji: "🔄",
-    description: "Find the opposite words!",
-    color: "from-cyan-400 to-blue-400",
+    description: "找出相反的词！",
     component: AntonymsMatch,
   },
 ];
@@ -80,55 +75,53 @@ export default function EnglishPage() {
 
   if (ActiveGameComponent) {
     return (
-      <div className="min-h-screen p-4">
-        <Navigation onBack={() => setActiveGame(null)} title="English Games" />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+        <Navigation onBack={() => setActiveGame(null)} title="英语游戏" />
         <ActiveGameComponent />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <Navigation onBack={null} title="English Games" />
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-red-50 p-6">
+      <Navigation onBack={null} title="英语游戏" />
 
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-500 mb-2">
+        <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500 mb-2">
           English Games 📚
         </h1>
-        <p className="text-xl text-gray-600 font-semibold">
-          Pick a game to start learning!
+        <p className="text-xl text-gray-600">
+          选一个游戏开始学习吧！
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {games.map((game, index) => (
           <motion.div
             key={game.id}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, type: "spring", bounce: 0.4 }}
-            whileHover={{ scale: 1.05, y: -5 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setActiveGame(game.id)}
-            className={`game-card bg-gradient-to-br ${game.color} text-white cursor-pointer`}
+            transition={{ delay: index * 0.1, type: "spring" }}
           >
-            <div className="text-6xl mb-3 text-center">{game.emoji}</div>
-            <h3 className="text-2xl font-black text-center mb-2">
-              {game.title}
-            </h3>
-            <p className="text-center text-white/90 font-semibold">
-              {game.description}
-            </p>
-            <motion.div
-              className="mt-4 bg-white/20 rounded-xl py-2 text-center font-bold"
-              whileHover={{ backgroundColor: "rgba(255,255,255,0.35)" }}
+            <GameCard
+              title={game.title}
+              description={game.description}
+              icon={game.emoji}
+              className="cursor-pointer"
             >
-              Play Now! 🎮
-            </motion.div>
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                onClick={() => setActiveGame(game.id)}
+              >
+                开始游戏 🎮
+              </Button>
+            </GameCard>
           </motion.div>
         ))}
       </div>
@@ -149,6 +142,12 @@ export default function EnglishPage() {
           </motion.span>
         ))}
       </motion.div>
+
+      {/* Mascot */}
+      <Mascot 
+        message={mascotMessages.welcome}
+        mood="happy"
+      />
     </div>
   );
 }
