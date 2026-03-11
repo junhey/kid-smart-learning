@@ -6,6 +6,7 @@ import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import { shuffleArray, randomInt } from "@/lib/gameUtils";
 
 const TOTAL_ROUNDS = 10;
@@ -171,21 +172,15 @@ export default function ClockGame() {
           </div>
         </>
       ) : (
-        <div className="text-center space-y-4">
-          <div className="text-6xl">🎉</div>
-          <h2 className="text-3xl font-bold">太棒了！</h2>
-          <p className="text-xl">
-            你答对了 {correct} / {TOTAL_ROUNDS} 题
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={restart}
-            className="px-8 py-3 bg-blue-500 text-white rounded-lg shadow-lg font-bold"
-          >
-            再玩一次
-          </motion.button>
-        </div>
+        <GameResult 
+          correct={correct}
+          total={TOTAL_ROUNDS}
+          onRestart={restart}
+          onBack={function() {
+            // 实际项目中会导航到主菜单
+            window.location.href = "/play";
+          }}
+        />
       )}
     </div>
   );
