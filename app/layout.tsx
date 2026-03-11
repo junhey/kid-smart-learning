@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { BottomNav } from "@/components/BottomNav";
 
 export const metadata: Metadata = {
   title: "Kid Smart Learning - Fun English & Math Games",
@@ -14,15 +15,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="font-rounded bg-gradient-to-b from-sky-100 to-blue-50 min-h-screen">
-        {children}
+      <body className="font-rounded bg-white min-h-screen">
+        <main className="pb-20">
+          {children}
+        </main>
+        <BottomNav />
       </body>
     </html>
   );
