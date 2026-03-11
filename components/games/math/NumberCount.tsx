@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import { shuffleArray, randomInt } from "@/lib/gameUtils";
 
 const EMOJIS = ["🍎", "🐶", "⭐", "🌸", "🦋", "🎈", "🍊", "🐱", "🔵", "🍓"];
@@ -35,7 +36,6 @@ export default function NumberCount() {
   const [selected, setSelected] = useState<number | null>(null);
   const [showReward, setShowReward] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const roundRef = useRef(0);
 
   const { addStar } = useReward();
   const { speak, playCorrectSound, playWrongSound } = useSound();
@@ -57,10 +57,9 @@ export default function NumberCount() {
         addStar(1);
         recordCorrect();
         speak(`${num}! Correct!`, { rate: 0.9 });
-        roundRef.current += 1;
         setTimeout(() => {
           setShowReward(false);
-          if (roundRef.current >= TOTAL_ROUNDS) {
+          if (total + 1 >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
             nextQuestion();
@@ -73,35 +72,23 @@ export default function NumberCount() {
         setTimeout(() => nextQuestion(), 1200);
       }
     },
-    [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion]
+    [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion, total]
   );
+
+  const handleRestart = () => {
+    reset();
+    setGameOver(false);
+    nextQuestion();
+  };
 
   if (gameOver) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.6 }}
-          className="text-center"
-        >
-          <div className="text-8xl mb-4">🔢</div>
-          <h2 className="text-4xl font-black text-cyan-600 mb-2">
-            Counting Star!
-          </h2>
-          <p className="text-2xl text-gray-600">
-            {correct}/{TOTAL_ROUNDS} correct!
-          </p>
-        </motion.div>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => { reset(); roundRef.current = 0; setGameOver(false); nextQuestion(); }}
-          className="btn-kid bg-gradient-to-b from-cyan-400 to-cyan-500 border-cyan-700 text-white px-10"
-        >
-          Play Again! 🔢
-        </motion.button>
-      </div>
+      <GameResult
+        correct={correct}
+        total={TOTAL_ROUNDS}
+        onRestart={handleRestart}
+        onBack={() => window.history.back()}
+      />
     );
   }
 
