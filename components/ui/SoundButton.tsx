@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { playClick } from "@/lib/sounds";
 
 interface SoundButtonProps {
   onClick: () => void;
@@ -9,6 +10,7 @@ interface SoundButtonProps {
   className?: string;
   disabled?: boolean;
   variant?: "primary" | "success" | "danger" | "neutral";
+  playSound?: boolean; // 是否播放点击音效
 }
 
 const variantStyles = {
@@ -24,25 +26,16 @@ export default function SoundButton({
   className = "",
   disabled = false,
   variant = "primary",
+  playSound = true,
 }: SoundButtonProps) {
   const handleClick = () => {
     if (disabled) return;
-    // Play a soft click sound using Web Audio API
-    try {
-      const audioCtx = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1);
-      gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-      oscillator.start(audioCtx.currentTime);
-      oscillator.stop(audioCtx.currentTime + 0.15);
-    } catch {
-      // Audio context not available
+    
+    // 播放点击音效 (Duolingo风格)
+    if (playSound) {
+      playClick();
     }
+    
     onClick();
   };
 

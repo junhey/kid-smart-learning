@@ -1,30 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { getSoundManager, playCorrect, playWrong, playClick } from "@/lib/sounds";
 
 interface SpeakOptions {
   rate?: number;
   pitch?: number;
   volume?: number;
-}
-
-function playTone(freq1: number, freq2: number, duration: number, gainVal: number) {
-  try {
-    const AudioCtx = window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new AudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.frequency.setValueAtTime(freq1, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(freq2, ctx.currentTime + duration);
-    gain.gain.setValueAtTime(gainVal, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
-  } catch {
-    // Audio context not available
-  }
 }
 
 export function useSound() {
@@ -65,11 +47,20 @@ export function useSound() {
   );
 
   const playCorrectSound = useCallback(() => {
-    playTone(440, 880, 0.3, 0.3);
+    playCorrect();
   }, []);
 
   const playWrongSound = useCallback(() => {
-    playTone(300, 200, 0.3, 0.3);
+    playWrong();
+  }, []);
+
+  const playClickSound = useCallback(() => {
+    playClick();
+  }, []);
+
+  const playSuccessSound = useCallback(() => {
+    const soundManager = getSoundManager();
+    soundManager.play('success');
   }, []);
 
   const cancel = useCallback(() => {
@@ -87,6 +78,8 @@ export function useSound() {
     speakSentence,
     playCorrectSound,
     playWrongSound,
+    playClickSound,
+    playSuccessSound,
     cancel,
     isSpeaking,
   };

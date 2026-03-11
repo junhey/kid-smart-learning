@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 import confetti from "canvas-confetti";
 import { colors, shadows, borderRadius, animations } from "@/lib/design-tokens";
+import { playPerfectResult, playGoodResult, playFairResult } from "@/lib/game-sounds";
 
 interface GameResultProps {
   correct: number;
@@ -57,6 +58,15 @@ export default function GameResult({
         }
       };
       frame();
+    }
+    
+    // 播放相应的音效
+    if (isPerfect) {
+      playPerfectResult();
+    } else if (isGood) {
+      playGoodResult();
+    } else {
+      playFairResult();
     }
   }, [isGood, isPerfect]);
 
