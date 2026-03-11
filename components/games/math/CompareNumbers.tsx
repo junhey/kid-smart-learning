@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import { randomInt } from "@/lib/gameUtils";
 
 const TOTAL_ROUNDS = 10;
@@ -39,6 +40,13 @@ export default function CompareNumbers() {
     setQuestion(buildQuestion());
     setSelected(null);
   }, []);
+
+  const handleRestart = useCallback(() => {
+    reset();
+    roundRef.current = 0;
+    setGameOver(false);
+    nextQuestion();
+  }, [reset, nextQuestion]);
 
   const handleSelect = useCallback(
     (choice: "greater" | "less") => {
@@ -76,28 +84,12 @@ export default function CompareNumbers() {
 
   if (gameOver) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.6 }}
-          className="text-center"
-        >
-          <div className="text-8xl mb-4">⚖️</div>
-          <h2 className="text-4xl font-black text-orange-600 mb-2">Compare Pro!</h2>
-          <p className="text-2xl text-gray-600">
-            {correct}/{TOTAL_ROUNDS} correct!
-          </p>
-        </motion.div>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => { reset(); roundRef.current = 0; setGameOver(false); nextQuestion(); }}
-          className="btn-kid bg-gradient-to-b from-orange-400 to-amber-500 border-orange-700 text-white px-10"
-        >
-          Play Again! ⚖️
-        </motion.button>
-      </div>
+      <GameResult
+        correct={correct}
+        total={TOTAL_ROUNDS}
+        onRestart={handleRestart}
+        onBack={() => window.history.back()}
+      />
     );
   }
 
