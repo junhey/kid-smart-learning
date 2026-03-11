@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import wordsData from "@/data/english/words.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
 
@@ -40,6 +42,7 @@ const COLOR_MAP: Record<string, string> = {
 const TOTAL_ROUNDS = 6;
 
 export default function ColorPaint() {
+  const router = useRouter();
   const colors = wordsData.colors as ColorItem[];
   const [round, setRound] = useState(0);
   const [targetColor, setTargetColor] = useState<ColorItem | null>(null);
@@ -50,7 +53,7 @@ export default function ColorPaint() {
 
   const { playCorrectSound, playWrongSound } = useSound();
   const { stars, addStar } = useReward();
-  const { total, recordCorrect, recordWrong } = useProgress(TOTAL_ROUNDS);
+  const { total, correct, recordCorrect, recordWrong } = useProgress(TOTAL_ROUNDS);
 
   const startRound = useCallback(() => {
     const target = colors[Math.floor(Math.random() * colors.length)];
@@ -99,30 +102,18 @@ export default function ColorPaint() {
     startRound();
   };
 
+  const handleBack = () => {
+    router.push("/");
+  };
+
   if (gameOver) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 flex flex-col items-center justify-center p-6">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="text-center bg-white p-8 rounded-3xl shadow-xl"
-        >
-          <div className="text-6xl mb-4">🎨</div>
-          <h2 className="text-3xl font-bold text-purple-600 mb-4">
-            Great Job!
-          </h2>
-          <p className="text-xl text-gray-600 mb-2">You scored: {stars}</p>
-          <p className="text-lg text-gray-500 mb-6">
-            You&apos;re a color master! 🌈
-          </p>
-          <button
-            onClick={handleRestart}
-            className="bg-purple-500 text-white px-8 py-3 rounded-full text-xl font-bold hover:bg-purple-600 transition-colors shadow-lg"
-          >
-            Play Again
-          </button>
-        </motion.div>
-      </div>
+      <GameResult
+        correct={correct}
+        total={TOTAL_ROUNDS}
+        onRestart={handleRestart}
+        onBack={handleBack}
+      />
     );
   }
 
