@@ -9,7 +9,31 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#FFB84D",
+        // Duolingo Green Primary
+        primary: {
+          DEFAULT: '#58CC02',
+          hover: '#46A302',
+          light: '#89E219',
+          dark: '#3D8A00',
+        },
+        // Status Colors
+        correct: {
+          DEFAULT: '#58CC02',
+          bg: '#D7FFB8',
+        },
+        wrong: {
+          DEFAULT: '#FF4B4B',
+          bg: '#FFD1D1',
+        },
+        // Accent Colors
+        accent: {
+          blue: '#1CB0F6',
+          purple: '#CE82FF',
+          orange: '#FF9600',
+          pink: '#FF66C4',
+          yellow: '#FFC800',
+        },
+        // Old colors (for backward compatibility)
         secondary: "#4DD0E1",
         danger: "#FF6B6B",
         success: "#81C784",
@@ -25,6 +49,11 @@ const config: Config = {
         float: "float 3s ease-in-out infinite",
         "star-burst": "starBurst 0.6s ease-out forwards",
         wiggle: "wiggle 0.5s ease-in-out",
+        // New Duolingo-style animations
+        "bounce-correct": "bounceCorrect 0.5s ease-out",
+        shake: "shake 0.4s ease-in-out",
+        "flash-green": "flashGreen 0.6s ease-in-out 2",
+        "pop-in": "popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
       },
       keyframes: {
         float: {
@@ -39,6 +68,24 @@ const config: Config = {
         wiggle: {
           "0%, 100%": { transform: "rotate(-5deg)" },
           "50%": { transform: "rotate(5deg)" },
+        },
+        // New keyframes
+        bounceCorrect: {
+          "0%, 100%": { transform: "translateY(0) scale(1)" },
+          "50%": { transform: "translateY(-20px) scale(1.05)" },
+        },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "25%": { transform: "translateX(-10px)" },
+          "75%": { transform: "translateX(10px)" },
+        },
+        flashGreen: {
+          "0%, 100%": { borderColor: "transparent" },
+          "50%": { borderColor: "#58CC02", borderWidth: "4px" },
+        },
+        popIn: {
+          "0%": { transform: "scale(0)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
         },
       },
     },
