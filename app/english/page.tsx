@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import AlphabetBalloon from "@/components/games/english/AlphabetBalloon";
+import AlphabetMatch from "@/components/games/english/AlphabetMatch";
 import WordMatch from "@/components/games/english/WordMatch";
 import PhonicsGame from "@/components/games/english/PhonicsGame";
 import ListenAndChoose from "@/components/games/english/ListenAndChoose";
@@ -28,6 +29,13 @@ const games = [
     emoji: "🐶",
     description: "图片和单词配对！",
     component: WordMatch,
+  },
+  {
+    id: "alphabetmatch",
+    title: "字母配对",
+    emoji: "🔠",
+    description: "选择字母的正确读音！",
+    component: AlphabetMatch,
   },
   {
     id: "phonics",
