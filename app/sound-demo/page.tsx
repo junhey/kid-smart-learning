@@ -7,7 +7,9 @@ import {
   playWrong, 
   playClick, 
   playSuccess,
-  getSoundManager
+  getSoundManager,
+  setVolume,
+  getVolume
 } from "@/lib/sounds";
 import { 
   playPerfectResult, 
@@ -20,15 +22,15 @@ import {
 } from "@/lib/game-sounds";
 
 export default function SoundDemoPage() {
-  const [volume, setVolume] = useState(0.7);
-  const [isEnabled, setIsEnabled] = useState(true);
-  
   const soundManager = getSoundManager();
   const gameSoundSystem = getGameSoundSystem();
   
+  const [volume, setVolume] = useState(() => getVolume());
+  const [isEnabled, setIsEnabled] = useState(() => soundManager.isEnabled);
+  
   const handleVolumeChange = (level: number) => {
     setVolume(level);
-    soundManager.setVolume(level);
+    // soundManager.setVolume已经通过setVolume调用过了
   };
   
   const toggleEnabled = () => {

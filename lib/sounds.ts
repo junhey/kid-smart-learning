@@ -124,25 +124,69 @@ const SOUNDS: Record<SoundType, SoundConfig> = {
 
 class SoundManager {
   private audioContext: AudioContext | null = null;
-  private isEnabled = true;
+  private _isEnabled = true;
   private volume = 0.5; // 全局音量控制
+  private volumeKey = 'kid-smart-sound-volume'; // 本地存储键名
+  private enabledKey = 'kid-smart-sound-enabled'; // 音效启用状态键名
+
+  get isEnabled(): boolean {
+    return this._isEnabled;
+  }
 
   constructor() {
     if (typeof window !== 'undefined') {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.loadSettingsFromStorage();
+    }
+  }
+
+  private loadSettingsFromStorage() {
+    try {
+      // 加载音量设置
+      const savedVolume = localStorage.getItem(this.volumeKey);
+      if (savedVolume !== null) {
+        const volume = parseFloat(savedVolume);
+        if (!isNaN(volume) && volume >= 0 && volume <= 1) {
+          this.volume = volume;
+        }
+      }
+      
+      // 加载音效启用状态
+      const savedEnabled = localStorage.getItem(this.enabledKey);
+      if (savedEnabled !== null) {
+        this._isEnabled = savedEnabled === 'true';
+      }
+    } catch (error) {
+      console.log('无法加载音效设置，使用默认值:', error);
+    }
+  }
+
+  private saveSettingsToStorage() {
+    try {
+      localStorage.setItem(this.volumeKey, this.volume.toString());
+      localStorage.setItem(this.enabledKey, this._isEnabled.toString());
+    } catch (error) {
+      console.log('无法保存音效设置:', error);
     }
   }
 
   enable() {
-    this.isEnabled = true;
+    this._isEnabled = true;
+    this.saveSettingsToStorage();
   }
 
   disable() {
-    this.isEnabled = false;
+    this._isEnabled = false;
+    this.saveSettingsToStorage();
+  }
+
+  getVolume() {
+    return this.volume;
   }
 
   setVolume(level: number) {
     this.volume = Math.max(0, Math.min(1, level));
+    this.saveSettingsToStorage();
   }
 
   play(type: SoundType) {
@@ -235,4 +279,17 @@ export function playClick() {
 
 export function playSuccess() {
   getSoundManager().playSuccess();
+}
+
+// 音量管理函数
+export function setVolume(level: number) {
+  getSoundManager().setVolume(level);
+}
+
+export function getVolume(): number {
+  return getSoundManager().getVolume();
+}
+
+export function isSoundEnabled(): boolean {
+  return getSoundManager().isEnabled;
 }
