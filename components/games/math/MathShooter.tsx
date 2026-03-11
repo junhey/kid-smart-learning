@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import { shuffleArray, randomInt } from "@/lib/gameUtils";
 
 const TOTAL_ROUNDS = 10;
@@ -75,6 +76,13 @@ export default function MathShooter() {
     setFeedback(null);
   }, [nextId]);
 
+  const handleRestart = useCallback(() => {
+    reset();
+    roundRef.current = 0;
+    setGameOver(false);
+    nextQuestion();
+  }, [reset, nextQuestion]);
+
   useEffect(() => {
     speak(`${question.a} ${question.isAddition ? "plus" : "minus"} ${question.b} equals?`, { rate: 0.8 });
   }, [question.a, question.b, question.isAddition]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -123,28 +131,12 @@ export default function MathShooter() {
 
   if (gameOver) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.6 }}
-          className="text-center"
-        >
-          <div className="text-8xl mb-4">🎯</div>
-          <h2 className="text-4xl font-black text-pink-600 mb-2">Sharp Shooter!</h2>
-          <p className="text-2xl text-gray-600">
-            {correct}/{TOTAL_ROUNDS} correct!
-          </p>
-        </motion.div>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => { reset(); roundRef.current = 0; setGameOver(false); nextQuestion(); }}
-          className="btn-kid bg-gradient-to-b from-pink-400 to-rose-500 border-pink-700 text-white px-10"
-        >
-          Play Again! 🎯
-        </motion.button>
-      </div>
+      <GameResult
+        correct={correct}
+        total={TOTAL_ROUNDS}
+        onRestart={handleRestart}
+        onBack={() => window.history.back()}
+      />
     );
   }
 
