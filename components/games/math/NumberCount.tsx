@@ -35,6 +35,8 @@ export default function NumberCount() {
   const [question, setQuestion] = useState<Question>(buildQuestion);
   const [selected, setSelected] = useState<number | null>(null);
   const [showReward, setShowReward] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [wrongAnimation, setWrongAnimation] = useState(false);
   const [gameOver, setGameOver] = useState(false);
 
   const { addStar } = useReward();
@@ -54,22 +56,28 @@ export default function NumberCount() {
       if (num === question.count) {
         playCorrectSound();
         setShowReward(true);
+        setShowCelebration(true); // Duolingo风格庆祝动画
         addStar(1);
         recordCorrect();
         speak(`${num}! Correct!`, { rate: 0.9 });
         setTimeout(() => {
           setShowReward(false);
+          setShowCelebration(false);
           if (total + 1 >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
             nextQuestion();
           }
-        }, 1500);
+        }, 1800); // 等待时间延长让庆祝动画播放完成
       } else {
         playWrongSound();
         recordWrong();
         speak(`Let's try again. Count again!`, { rate: 0.8 });
-        setTimeout(() => nextQuestion(), 1200);
+        setWrongAnimation(true); // 触发表单项抖动动画
+        setTimeout(() => {
+          setWrongAnimation(false);
+          nextQuestion();
+        }, 1600); // 等待抖动动画后再下一题
       }
     },
     [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion, total]
@@ -97,6 +105,54 @@ export default function NumberCount() {
       <StarReward show={showReward} />
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-cyan-400 to-blue-400" />
 
+      {/* Duolingo风格成功反馈 */}
+      {showCelebration && (
+        <motion.div
+          key="celebration"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: [0, 1.2, 1] }}
+            transition={{ duration: 0.6, times: [0, 0.7, 1] }}
+            className="rounded-full bg-green-400/90 shadow-2xl p-12"
+          >
+            <div className="text-white text-6xl">✓</div>
+          </motion.div>
+          
+          {/* 庆祝粒子效果 */}
+          {[0, 1, 2, 3, 4].map((i) => (
+            <motion.div
+              key={i}
+              initial={{ x: 0, y: 0, opacity: 0 }}
+              animate={{
+                x: Math.sin(i * 72) * 80,
+                y: Math.cos(i * 72) * 80,
+                opacity: [0, 1, 0],
+                scale: [0, 1, 0]
+              }}
+              transition={{ duration: 1, delay: i * 0.1 }}
+              className="absolute w-8 h-8 bg-yellow-300/80 rounded-full flex items-center justify-center"
+            >
+              <div className="text-xl">✨</div>
+            </motion.div>
+          ))}
+          
+          {/* "Great job!" 文字 */}
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="absolute bottom-1/4 text-4xl font-bold text-white bg-green-500/80 py-3 px-6 rounded-full shadow-lg"
+          >
+            Great job!
+          </motion.div>
+        </motion.div>
+      )}
+
       <motion.div
         key={`${question.count}-${question.emoji}`}
         initial={{ opacity: 0, y: 20 }}
@@ -123,7 +179,16 @@ export default function NumberCount() {
         </div>
 
         {/* Number options */}
-        <div className="grid grid-cols-2 gap-4">
+        <motion.div
+          className="grid grid-cols-2 gap-4"
+          animate={wrongAnimation ? { 
+            x: [0, -10, 10, -10, 10, 0] 
+          } : {}}
+          transition={wrongAnimation ? {
+            duration: 0.6,
+            times: [0, 0.2, 0.4, 0.6, 0.8, 1]
+          } : {}}
+        >
           {question.options.map((num) => {
             const isCorrect = num === question.count;
             const isSelected = selected === num;
@@ -143,7 +208,7 @@ export default function NumberCount() {
               </motion.button>
             );
           })}
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   );
