@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useReward } from "@/hooks/useReward";
+import { useSound } from "@/hooks/useSound";
+import { useProgress } from "@/hooks/useProgress";
+import StarReward from "@/components/ui/StarReward";
+import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 
 type Shape = "circle" | "square" | "triangle" | "star";
 
@@ -19,15 +25,22 @@ const shapeNames: Record<Shape, string> = {
   star: "Star",
 };
 
+const TOTAL_ROUNDS = 10;
+
 export default function ShapeCount() {
-  const [score, setScore] = useState(0);
   const [targetShape, setTargetShape] = useState<Shape>("circle");
   const [targetCount, setTargetCount] = useState(0);
   const [shapes, setShapes] = useState<{ type: Shape; id: number }[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [showReward, setShowReward] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const roundRef = useRef(0);
 
-  const generateRound = () => {
+  const { addStar } = useReward();
+  const { speak, playCorrectSound, playWrongSound } = useSound();
+  const { correct, total, recordCorrect, recordWrong, reset } = useProgress(TOTAL_ROUNDS);
+
+  const generateRound = useCallback(() => {
     const allShapes: Shape[] = ["circle", "square", "triangle", "star"];
     const target = allShapes[Math.floor(Math.random() * allShapes.length)];
     const count = Math.floor(Math.random() * 5) + 3; // 3-7
@@ -54,12 +67,12 @@ export default function ShapeCount() {
     setTargetCount(count);
     setShapes(shapeList);
     setSelectedAnswer(null);
-    setIsCorrect(null);
-  };
+  }, []);
 
   useEffect(() => {
+    reset();
     generateRound();
-  }, []);
+  }, [reset, generateRound]);
 
   const generateOptions = () => {
     const options = [targetCount];
@@ -75,30 +88,60 @@ export default function ShapeCount() {
   const options = generateOptions();
 
   const handleAnswer = (answer: number) => {
-    setSelectedAnswer(answer);
-    const correct = answer === targetCount;
-    setIsCorrect(correct);
+    if (selectedAnswer !== null) return;
     
-    if (correct) {
-      setScore(score + 1);
-      setTimeout(() => generateRound(), 1200);
+    setSelectedAnswer(answer);
+    const isAnswerCorrect = answer === targetCount;
+
+    if (isAnswerCorrect) {
+      playCorrectSound();
+      recordCorrect();
+      addStar(1);
+      setShowReward(true);
+      roundRef.current += 1;
+      
+      if (roundRef.current >= TOTAL_ROUNDS) {
+        setTimeout(() => setGameOver(true), 1200);
+      } else {
+        setTimeout(() => {
+          setShowReward(false);
+          generateRound();
+        }, 1200);
+      }
     } else {
+      playWrongSound();
+      recordWrong();
       setTimeout(() => {
         setSelectedAnswer(null);
-        setIsCorrect(null);
       }, 1000);
     }
   };
 
+  const handleRestart = () => {
+    roundRef.current = 0;
+    setGameOver(false);
+    reset();
+    generateRound();
+  };
+
+  const handleBack = () => {
+    // This should navigate back to the main page
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  };
+
+  if (gameOver) {
+    return <GameResult correct={correct} total={total} onRestart={handleRestart} onBack={handleBack} />;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-2xl"
-      >
-        Score: {score} ⭐
-      </motion.div>
+      <div className="w-full max-w-2xl">
+        <ProgressBar current={roundRef.current + 1} total={TOTAL_ROUNDS} />
+      </div>
+
+      {showReward && <StarReward show={true} onComplete={() => {}} />}
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -146,7 +189,7 @@ export default function ShapeCount() {
               disabled={selectedAnswer !== null}
               className={`py-6 px-8 rounded-2xl text-3xl font-black transition-all ${
                 selectedAnswer === option
-                  ? isCorrect
+                  ? selectedAnswer === targetCount
                     ? "bg-green-400 text-white scale-110"
                     : "bg-red-400 text-white scale-90"
                   : "bg-gradient-to-br from-blue-400 to-cyan-400 text-white hover:shadow-xl"
@@ -159,16 +202,16 @@ export default function ShapeCount() {
       </div>
 
       <AnimatePresence>
-        {isCorrect !== null && (
+        {selectedAnswer !== null && (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             className={`mt-6 text-4xl font-black ${
-              isCorrect ? "text-green-500" : "text-red-500"
+              selectedAnswer === targetCount ? "text-green-500" : "text-red-500"
             }`}
           >
-            {isCorrect ? "🎉 Amazing!" : "❌ Try again!"}
+            {selectedAnswer === targetCount ? "🎉 Amazing!" : "❌ Try again!"}
           </motion.div>
         )}
       </AnimatePresence>
