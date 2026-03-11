@@ -13,5 +13,13 @@
   { "word": "good", "antonym": "bad" },
   { "word": "full", "antonym": "empty" },
   { "word": "easy", "antonym": "hard" },
-  { "word": "clean", "antonym": "dirty" }
+  { "word": "clean", "antonym": "dirty" },
+  { "word": "high", "antonym": "low" },
+  { "word": "heavy", "antonym": "light" },
+  { "word": "wet", "antonym": "dry" },
+  { "word": "right", "antonym": "wrong" },
+  { "word": "front", "antonym": "back" },
+  { "word": "wide", "antonym": "narrow" },
+  { "word": "smooth", "antonym": "rough" },
+  { "word": "strong", "antonym": "weak" }
 ]

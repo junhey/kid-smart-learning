@@ -90,6 +90,9 @@
     { "word": "plate", "emoji": "🍽️" },
     { "word": "spoon", "emoji": "🥄" },
     { "word": "key", "emoji": "🔑" },
-    { "word": "bag", "emoji": "🎒" }
+    { "word": "bag", "emoji": "🎒" },
+    { "word": "bottle", "emoji": "🧴" },
+    { "word": "toothbrush", "emoji": "🪥" },
+    { "word": "lamp", "emoji": "🪔" }
   ]
 }
