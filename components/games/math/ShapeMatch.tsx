@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
+import GameResult from "@/components/ui/GameResult";
 import shapesData from "@/data/math/shapes.json";
 import { shuffleArray } from "@/lib/gameUtils";
 
@@ -158,31 +159,21 @@ export default function ShapeMatch() {
     [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion]
   );
 
+  const handleRestart = useCallback(() => {
+    roundRef.current = 0;
+    setGameOver(false);
+    reset();
+    nextQuestion();
+  }, [reset, nextQuestion]);
+
+  const handleBack = useCallback(() => {
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  }, []);
+
   if (gameOver) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.6 }}
-          className="text-center"
-        >
-          <div className="text-8xl mb-4">🔷</div>
-          <h2 className="text-4xl font-black text-purple-600 mb-2">Shape Master!</h2>
-          <p className="text-2xl text-gray-600">
-            {correct}/{TOTAL_ROUNDS} correct!
-          </p>
-        </motion.div>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => { reset(); roundRef.current = 0; setGameOver(false); nextQuestion(); }}
-          className="btn-kid bg-gradient-to-b from-purple-400 to-purple-500 border-purple-700 text-white px-10"
-        >
-          Play Again! 🔷
-        </motion.button>
-      </div>
-    );
+    return <GameResult correct={correct} total={total} onRestart={handleRestart} onBack={handleBack} />;
   }
 
   return (
