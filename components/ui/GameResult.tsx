@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import confetti from "canvas-confetti";
+import { colors, shadows, borderRadius, animations } from "@/lib/design-tokens";
 
 interface GameResultProps {
   correct: number;
@@ -22,7 +23,7 @@ export default function GameResult({
   const isGood = accuracy >= 80;
 
   useEffect(() => {
-    // Launch confetti for good performance
+    // Launch confetti for good performance with Duolingo colors
     if (isGood) {
       const duration = isPerfect ? 3000 : 1500;
       const end = Date.now() + duration;
@@ -33,14 +34,22 @@ export default function GameResult({
           angle: 60,
           spread: 55,
           origin: { x: 0, y: 0.8 },
-          colors: ["#FFD700", "#FFA500", "#FF6B6B"],
+          colors: [
+            colors.accent.yellow,   // 星星黄
+            colors.accent.orange,   // 警告橙
+            colors.accent.pink      // 成就粉
+          ],
         });
         confetti({
           particleCount: isPerfect ? 5 : 2,
           angle: 120,
           spread: 55,
           origin: { x: 1, y: 0.8 },
-          colors: ["#FFD700", "#FFA500", "#FF6B6B"],
+          colors: [
+            colors.accent.yellow,
+            colors.accent.orange,
+            colors.accent.pink
+          ],
         });
 
         if (Date.now() < end) {
@@ -67,14 +76,31 @@ export default function GameResult({
     return "⭐";
   };
 
+  const getResultColor = () => {
+    if (isPerfect) return colors.primary.green;
+    if (accuracy >= 90) return colors.accent.blue;
+    if (accuracy >= 80) return colors.accent.purple;
+    if (accuracy >= 60) return colors.accent.orange;
+    return colors.accent.pink;
+  };
+
   return (
     <motion.div
-      className="fixed inset-0 bg-gradient-to-br from-purple-400 via-pink-400 to-yellow-400 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-gradient-to-br from-purple-100 via-pink-100 to-yellow-100 flex items-center justify-center z-50"
+      style={{ 
+        backgroundColor: colors.background.main,
+        backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(88, 204, 2, 0.05), transparent 50%), radial-gradient(circle at 75% 75%, rgba(206, 130, 255, 0.05), transparent 50%)'
+      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
       <motion.div
-        className="bg-white rounded-3xl p-8 shadow-2xl max-w-md w-full mx-4"
+        className="bg-white p-8 shadow-2xl max-w-md w-full mx-4"
+        style={{
+          backgroundColor: colors.background.card,
+          borderRadius: borderRadius['3xl'],
+          boxShadow: shadows.lg
+        }}
         initial={{ scale: 0, rotate: -10 }}
         animate={{ scale: 1, rotate: 0 }}
         transition={{ type: "spring", duration: 0.6 }}
@@ -91,7 +117,11 @@ export default function GameResult({
 
         {/* Message */}
         <motion.h2
-          className="text-3xl font-black text-center mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+          className="text-3xl font-black text-center mb-6 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent"
+          style={{ 
+            color: getResultColor(),
+            backgroundImage: `linear-gradient(45deg, ${getResultColor()}, ${colors.accent.purple})`
+          }}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -101,20 +131,50 @@ export default function GameResult({
 
         {/* Score Display */}
         <motion.div
-          className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 mb-6"
+          className="rounded-2xl p-6 mb-6"
+          style={{
+            backgroundColor: isGood ? colors.status.correctBg : colors.background.subtle,
+            border: `2px solid ${isGood ? colors.status.correct : colors.border.light}`,
+            borderRadius: borderRadius['2xl']
+          }}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
           <div className="flex justify-around items-center text-center">
             <div>
-              <div className="text-5xl font-black text-green-500">{correct}</div>
-              <div className="text-sm font-semibold text-gray-600 mt-1">答对</div>
+              <div 
+                className="text-5xl font-black"
+                style={{ color: colors.status.correct }}
+              >
+                {correct}
+              </div>
+              <div 
+                className="text-sm font-semibold mt-1"
+                style={{ color: colors.text.secondary }}
+              >
+                答对
+              </div>
             </div>
-            <div className="text-4xl font-black text-gray-300">/</div>
+            <div 
+              className="text-4xl font-black"
+              style={{ color: colors.border.light }}
+            >
+              /
+            </div>
             <div>
-              <div className="text-5xl font-black text-blue-500">{total}</div>
-              <div className="text-sm font-semibold text-gray-600 mt-1">总题数</div>
+              <div 
+                className="text-5xl font-black"
+                style={{ color: colors.accent.blue }}
+              >
+                {total}
+              </div>
+              <div 
+                className="text-sm font-semibold mt-1"
+                style={{ color: colors.text.secondary }}
+              >
+                总题数
+              </div>
             </div>
           </div>
           <motion.div
@@ -123,10 +183,18 @@ export default function GameResult({
             animate={{ scale: 1 }}
             transition={{ delay: 0.6, type: "spring" }}
           >
-            <div className="text-3xl font-black text-transparent bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text">
+            <div 
+              className="text-3xl font-black"
+              style={{ color: getResultColor() }}
+            >
               {accuracy}%
             </div>
-            <div className="text-xs text-gray-500 mt-1">正确率</div>
+            <div 
+              className="text-xs mt-1"
+              style={{ color: colors.text.muted }}
+            >
+              正确率
+            </div>
           </motion.div>
         </motion.div>
 
@@ -139,15 +207,29 @@ export default function GameResult({
         >
           <button
             onClick={onRestart}
-            className="flex-1 bg-gradient-to-r from-green-400 to-green-500 text-white font-bold py-4 px-6 rounded-2xl text-lg hover:scale-105 transition-transform shadow-lg"
+            className="flex-1 relative font-bold py-4 px-6 text-lg transition-all duration-300 hover:-translate-y-1 active:translate-y-1"
+            style={{
+              backgroundColor: colors.primary.green,
+              color: colors.text.white,
+              borderRadius: borderRadius.xl,
+              boxShadow: shadows.button,
+              border: `2px solid ${colors.primary.greenDark}`,
+            }}
           >
-            🔄 再玩一次
+            <span className="drop-shadow-md">🔄 再玩一次</span>
           </button>
           <button
             onClick={onBack}
-            className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold py-4 px-6 rounded-2xl text-lg hover:scale-105 transition-transform shadow-lg"
+            className="flex-1 relative font-bold py-4 px-6 text-lg transition-all duration-300 hover:-translate-y-1 active:translate-y-1"
+            style={{
+              backgroundColor: colors.accent.blue,
+              color: colors.text.white,
+              borderRadius: borderRadius.xl,
+              boxShadow: `0 4px 0 0 ${colors.accent.blue.replace('#', '#1A')}`,
+              border: `2px solid ${colors.accent.blue.replace('#', '#1A')}`,
+            }}
           >
-            🏠 返回
+            <span className="drop-shadow-md">🏠 返回选择</span>
           </button>
         </motion.div>
       </motion.div>
