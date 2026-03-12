@@ -29,7 +29,9 @@ export default function CompareNumbers() {
   const [question, setQuestion] = useState<Question>(buildQuestion);
   const [selected, setSelected] = useState<string | null>(null);
   const [showReward, setShowReward] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const roundRef = useRef(0);
 
   const { addStar } = useReward();
@@ -39,6 +41,8 @@ export default function CompareNumbers() {
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion());
     setSelected(null);
+    setFeedback(null);
+    setShowCelebration(false);
   }, []);
 
   const handleRestart = useCallback(() => {
@@ -52,10 +56,12 @@ export default function CompareNumbers() {
     (choice: "greater" | "less") => {
       if (selected) return;
       setSelected(choice);
+      setFeedback(choice === question.correct ? "correct" : "wrong");
 
       if (choice === question.correct) {
         playCorrectSound();
         setShowReward(true);
+        setShowCelebration(true);
         addStar(1);
         recordCorrect();
         const msg =
@@ -66,6 +72,7 @@ export default function CompareNumbers() {
         roundRef.current += 1;
         setTimeout(() => {
           setShowReward(false);
+          setShowCelebration(false);
           if (roundRef.current >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -96,6 +103,39 @@ export default function CompareNumbers() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      {/* Celebration animation */}
+      {showCelebration && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+        >
+          <div className="relative">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 rounded-full border-4 border-amber-500 border-opacity-50"
+            />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.5, 1] }}
+              transition={{ duration: 0.6 }}
+              className="text-8xl text-amber-500"
+            >
+              ✨
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-3xl font-bold text-amber-600 whitespace-nowrap"
+            >
+              Excellent! Perfect!
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-orange-400 to-amber-500" />
 
       <motion.div
