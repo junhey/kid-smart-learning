@@ -64,6 +64,7 @@ export default function MathShooter() {
 
   const [question, setQuestion] = useState<Question>(() => buildQuestion(nextId));
   const [showReward, setShowReward] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
 
@@ -74,6 +75,7 @@ export default function MathShooter() {
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion(nextId));
     setFeedback(null);
+    setShowCelebration(false);
   }, [nextId]);
 
   const handleRestart = useCallback(() => {
@@ -100,12 +102,14 @@ export default function MathShooter() {
         playCorrectSound();
         setFeedback("correct");
         setShowReward(true);
+        setShowCelebration(true);
         addStar(1);
         recordCorrect();
         speak(`${opt.value}! Correct!`, { rate: 0.9 });
         roundRef.current += 1;
         setTimeout(() => {
           setShowReward(false);
+          setShowCelebration(false);
           if (roundRef.current >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -143,6 +147,39 @@ export default function MathShooter() {
   return (
     <div className="max-w-3xl mx-auto">
       <StarReward show={showReward} />
+      {/* Celebration animation */}
+      {showCelebration && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+        >
+          <div className="relative">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 rounded-full border-4 border-pink-400 border-opacity-50"
+            />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.5, 1] }}
+              transition={{ duration: 0.6 }}
+              className="text-8xl text-pink-500"
+            >
+              ✨
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-3xl font-bold text-pink-600 whitespace-nowrap"
+            >
+              Correct! Great job!
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-pink-400 to-rose-500" />
 
       {/* Question */}
@@ -196,11 +233,22 @@ export default function MathShooter() {
                 onClick={() => handleShoot(opt)}
                 whileHover={{ scale: 1.15 }}
               >
-                <div
-                  className={`w-16 h-16 bg-gradient-to-b ${opt.color} rounded-full flex items-center justify-center shadow-lg`}
+                <motion.div
+                  className={`w-16 h-16 bg-gradient-to-b ${opt.color} rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+                    feedback === "wrong" && opt.value !== question.answer ? "bg-gradient-to-b from-red-400 to-red-600 animate-pulse" : ""
+                  } ${
+                    feedback === "correct" && opt.value === question.answer ? "bg-gradient-to-b from-green-400 to-green-600 scale-125" : ""
+                  }`}
+                  animate={feedback === "wrong" && opt.value !== question.answer ? {
+                    x: [0, -5, 5, -5, 5, 0],
+                  } : {}}
+                  transition={feedback === "wrong" && opt.value !== question.answer ? {
+                    duration: 0.5,
+                    repeat: 0,
+                  } : {}}
                 >
                   <span className="text-white font-black text-2xl">{opt.value}</span>
-                </div>
+                </motion.div>
               </motion.div>
             ) : (
               <motion.div
