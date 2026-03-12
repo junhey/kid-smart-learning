@@ -117,7 +117,9 @@ export default function ShapeMatch() {
   const [question, setQuestion] = useState<Question>(() => buildQuestion(shapes));
   const [selected, setSelected] = useState<string | null>(null);
   const [showReward, setShowReward] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const roundRef = useRef(0);
 
   const { addStar } = useReward();
@@ -127,6 +129,8 @@ export default function ShapeMatch() {
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion(shapes));
     setSelected(null);
+    setFeedback(null);
+    setShowCelebration(false);
   }, [shapes]);
 
   const handleSelect = useCallback(
@@ -136,13 +140,16 @@ export default function ShapeMatch() {
 
       if (shape.name === question.target.name) {
         playCorrectSound();
+        setFeedback("correct");
         setShowReward(true);
+        setShowCelebration(true);
         addStar(1);
         recordCorrect();
         speak(`${shape.name}! Correct!`, { rate: 0.9 });
         roundRef.current += 1;
         setTimeout(() => {
           setShowReward(false);
+          setShowCelebration(false);
           if (roundRef.current >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -151,6 +158,7 @@ export default function ShapeMatch() {
         }, 1500);
       } else {
         playWrongSound();
+        setFeedback("wrong");
         recordWrong();
         speak(`Try again!`, { rate: 0.9 });
         setTimeout(() => nextQuestion(), 1200);
@@ -179,6 +187,39 @@ export default function ShapeMatch() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      {/* Celebration animation */}
+      {showCelebration && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+        >
+          <div className="relative">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 rounded-full border-4 border-purple-400 border-opacity-50"
+            />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.5, 1] }}
+              transition={{ duration: 0.6 }}
+              className="text-8xl text-purple-500"
+            >
+              ✨
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-3xl font-bold text-purple-600 whitespace-nowrap"
+            >
+              Correct! Great job!
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-purple-400 to-violet-500" />
 
       <motion.div
@@ -213,17 +254,76 @@ export default function ShapeMatch() {
                 className={`
                   min-h-[100px] rounded-3xl p-4 shadow-lg flex flex-col items-center justify-center gap-2
                   border-4 transition-all cursor-pointer
-                  ${isSelected && isCorrect ? "bg-green-100 border-green-500" : ""}
-                  ${isSelected && !isCorrect ? "bg-red-100 border-red-500" : ""}
+                  ${feedback === "correct" && isSelected && isCorrect ? "bg-green-100 border-green-500 scale-110" : ""}
+                  ${feedback === "wrong" && isSelected && !isCorrect ? "bg-red-100 border-red-500" : ""}
                   ${!isSelected ? "bg-white border-gray-200 hover:border-purple-300" : ""}
                 `}
+                animate={
+                  feedback === "wrong" && isSelected && !isCorrect
+                    ? {
+                        x: [0, -5, 5, -5, 5, 0],
+                      }
+                    : {}
+                }
+                transition={
+                  feedback === "wrong" && isSelected && !isCorrect
+                    ? {
+                        duration: 0.5,
+                        repeat: 0,
+                      }
+                    : {}
+                }
               >
                 <ShapeSVG name={shape.name} color={shape.color} />
+                {feedback === "correct" && isSelected && isCorrect && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-2xl text-green-600 font-bold absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg"
+                  >
+                    ✓
+                  </motion.div>
+                )}
+                {feedback === "wrong" && isSelected && !isCorrect && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="text-2xl text-red-600 font-bold absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-lg"
+                  >
+                    ✗
+                  </motion.div>
+                )}
               </motion.button>
             );
           })}
         </div>
       </motion.div>
+
+      {/* Feedback messages */}
+      <AnimatePresence>
+        {feedback === "wrong" && (
+          <motion.p
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="text-center text-red-500 font-bold text-xl mt-4"
+          >
+            Not that shape! Try again! 💪
+          </motion.p>
+        )}
+        {feedback === "correct" && (
+          <motion.p
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="text-center text-green-600 font-bold text-xl mt-4"
+          >
+            Perfect! You found the {question.target.name}! 🎉
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
