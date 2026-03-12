@@ -48,6 +48,7 @@ export default function AdditionGame() {
   const [question, setQuestion] = useState<Question>(buildQuestion);
   const [selected, setSelected] = useState<number | null>(null);
   const [showReward, setShowReward] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const roundRef = useRef(0);
 
@@ -58,6 +59,7 @@ export default function AdditionGame() {
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion());
     setSelected(null);
+    setShowCelebration(false);
   }, []);
 
   const handleSelect = useCallback(
@@ -68,6 +70,7 @@ export default function AdditionGame() {
       if (num === question.answer) {
         playCorrectSound();
         setShowReward(true);
+        setShowCelebration(true);
         addStar(1);
         recordCorrect();
         speak(`${num}! Correct!`, { rate: 0.9 });
@@ -111,6 +114,39 @@ export default function AdditionGame() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      {/* Celebration animation */}
+      {showCelebration && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.5, opacity: 0 }}
+          className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+        >
+          <div className="relative">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 rounded-full border-4 border-green-400 border-opacity-50"
+            />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.5, 1] }}
+              transition={{ duration: 0.6 }}
+              className="text-8xl text-green-500"
+            >
+              ✨
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 text-3xl font-bold text-green-600 whitespace-nowrap"
+            >
+              Great Job!
+            </motion.div>
+          </div>
+        </motion.div>
+      )}
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-green-400 to-emerald-500" />
 
       <motion.div

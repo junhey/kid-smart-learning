@@ -165,11 +165,31 @@ button {
   transition-duration: 0.1s;
 }
 
+/* Duolingo-style enhanced feedback */
 .answer-btn.correct {
-  @apply bg-green-400 border-green-600 text-white scale-105;
+  @apply bg-gradient-to-br from-green-400 to-emerald-500 border-emerald-600 text-white;
+  transform: scale(1.08);
+  animation: pop-pulse 0.6s ease-out forwards;
+  box-shadow: 0 15px 30px -5px rgba(34, 197, 94, 0.5),
+              0 0 0 3px rgba(34, 197, 94, 0.4) !important;
 }
 
 .answer-btn.wrong {
-  @apply bg-red-400 border-red-600 text-white;
-  animation: shake 0.4s ease-in-out;
+  @apply bg-gradient-to-br from-red-400 to-rose-500 border-rose-600 text-white;
+  animation: shake 0.4s ease-in-out, pulse-red 0.6s ease-out;
+  box-shadow: 0 15px 30px -5px rgba(239, 68, 68, 0.4),
+              0 0 0 3px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Add new keyframes for enhanced feedback */
+@keyframes pop-pulse {
+  0% { transform: scale(1); box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.2); }
+  30% { transform: scale(1.15); box-shadow: 0 20px 40px -10px rgba(34, 197, 94, 0.6); }
+  60% { transform: scale(1.08); box-shadow: 0 15px 30px -5px rgba(34, 197, 94, 0.5); }
+  100% { transform: scale(1.08); box-shadow: 0 15px 30px -5px rgba(34, 197, 94, 0.5); }
+}
+
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 15px 30px -5px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 20px 40px -8px rgba(239, 68, 68, 0.6); }
 }
