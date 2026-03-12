@@ -21,5 +21,13 @@
   { "word": "front", "antonym": "back" },
   { "word": "wide", "antonym": "narrow" },
   { "word": "smooth", "antonym": "rough" },
-  { "word": "strong", "antonym": "weak" }
+  { "word": "strong", "antonym": "weak" },
+  { "word": "near", "antonym": "far" },
+  { "word": "long", "antonym": "short" },
+  { "word": "new", "antonym": "old" },
+  { "word": "rich", "antonym": "poor" },
+  { "word": "soft", "antonym": "hard" },
+  { "word": "thick", "antonym": "thin" },
+  { "word": "bright", "antonym": "dark" },
+  { "word": "brave", "antonym": "scared" }
 ]
