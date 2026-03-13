@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
@@ -16,6 +16,54 @@ interface Question {
   minute: number;
   answer: string;
   options: string[];
+}
+
+function CelebrationAnimation() {
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 pointer-events-none">
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180;
+          const distance = 200;
+          const x = 50 + distance * Math.cos(angle);
+          const y = 50 + distance * Math.sin(angle);
+          return (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0, x: "50vw", y: "50vh" }}
+              animate={{ scale: 1, opacity: 1, x: `${x}vw`, y: `${y}vh` }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.8, delay: i * 0.05 }}
+              className="absolute w-20 h-20 flex items-center justify-center text-4xl"
+              style={{ left: -40, top: -40 }}
+            >
+              {"✨⭐🎉🌈🎈💖🎊💫🎯🚀🧠🧩".split("")[i]}
+            </motion.div>
+          );
+        })}
+        
+        {/* Center explosion */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [0, 2, 1], opacity: [0, 1, 0] }}
+          transition={{ duration: 1.2 }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl text-yellow-400"
+        >
+          🎉
+        </motion.div>
+        
+        {/* Floating "Great Job!" */}
+        <motion.div
+          initial={{ y: 0, opacity: 0 }}
+          animate={{ y: -30, opacity: 1 }}
+          transition={{ duration: 1.5 }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mt-20 text    text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-pink-500 font-black text-5xl"
+        >
+          Great Job!
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
 }
 
 function buildQuestion(): Question {
@@ -43,6 +91,8 @@ export default function ClockGame() {
   const [question, setQuestion] = useState<Question>(buildQuestion);
   const [status, setStatus] = useState<"" | "correct" | "wrong">("");
   const [shake, setShake] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
   const questionRef = useRef(question);
   
   const { addStar } = useReward();
@@ -50,6 +100,14 @@ export default function ClockGame() {
   const { correct, total, recordCorrect, recordWrong, reset: resetProgress } = useProgress(TOTAL_ROUNDS);
 
   const isComplete = total >= TOTAL_ROUNDS;
+
+  // 控制庆祝动画显示
+  useEffect(() => {
+    if (showCelebration) {
+      const timer = setTimeout(() => setShowCelebration(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showCelebration]);
 
   const nextQuestion = useCallback(() => {
     const q = buildQuestion();
@@ -67,15 +125,20 @@ export default function ClockGame() {
         recordCorrect();
         playCorrectSound();
         addStar(1);
+        setCorrectCount(c => c + 1);
+        if (correctCount + 1 > 0 && (correctCount + 1) % 3 === 0) {
+          setShowCelebration(true);
+        }
       } else {
         recordWrong();
         playWrongSound();
         setShake(true);
+        setCorrectCount(0);
         setTimeout(() => setShake(false), 500);
       }
       setTimeout(nextQuestion, 1500);
     },
-    [status, isComplete, recordCorrect, recordWrong, playCorrectSound, playWrongSound, addStar, nextQuestion]
+    [status, isComplete, recordCorrect, recordWrong, playCorrectSound, playWrongSound, addStar, nextQuestion, correctCount]
   );
 
   const restart = () => {
@@ -90,6 +153,8 @@ export default function ClockGame() {
     <div className="flex flex-col items-center gap-6 max-w-2xl mx-auto p-4">
       <h1 className="text-3xl font-bold text-center">⏰ 时钟游戏</h1>
       <ProgressBar current={correct} total={TOTAL_ROUNDS} />
+
+      {showCelebration && <CelebrationAnimation />}
 
       {!isComplete ? (
         <>
@@ -150,24 +215,37 @@ export default function ClockGame() {
 
           <div className="grid grid-cols-2 gap-4 w-full max-w-md">
             {question.options.map((opt) => (
-              <motion.button
+              <motion.div
                 key={opt}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleAnswer(opt)}
-                disabled={!!status}
-                className={`p-6 text-2xl font-bold rounded-xl shadow-md transition ${
-                  status === "correct" && opt === question.answer
-                    ? "bg-green-500 text-white"
-                    : status === "wrong" && opt === question.answer
-                    ? "bg-green-500 text-white"
-                    : status && opt !== question.answer
-                    ? "bg-gray-300"
-                    : "bg-blue-500 text-white hover:bg-blue-600"
-                }`}
+                animate={status === "wrong" && opt !== question.answer && shake ? 
+                  { rotate: [0, -5, 5, -5, 5, 0], scale: [1, 0.95, 1] } : 
+                  status === "correct" && opt === question.answer ?
+                  { scale: [1, 1.15, 1], backgroundColor: "#4ade80" } :
+                  {}
+                }
+                transition={shake ? { duration: 0.5, repeat: 0 } : status === "correct" && opt === question.answer ? { duration: 0.6, repeat: 0 } : {}}
               >
-                {opt}
-              </motion.button>
+                <motion.button
+                  key={opt}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleAnswer(opt)}
+                  disabled={!!status}
+                  className={`p-6 text-2xl font-bold rounded-xl shadow-md transition-all duration-300 ${
+                    status === "correct" && opt === question.answer
+                      ? "bg-green-500 text-white ring-4 ring-green-300 ring-opacity-50 rounded-2xl"
+                      : status === "wrong" && opt === question.answer
+                      ? "bg-green-500 text-white"
+                      : status === "wrong" && opt !== question.answer
+                      ? "bg-red-400 text-white ring-2 ring-red-300"
+                      : status && opt !== question.answer
+                      ? "bg-gray-300 text-gray-500"
+                      : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 active:scale-95"
+                  }`}
+                >
+                  {opt}
+                </motion.button>
+              </motion.div>
             ))}
           </div>
         </>
