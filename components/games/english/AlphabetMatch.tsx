@@ -1,13 +1,51 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+
+function CelebrationAnimation() {
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 pointer-events-none">
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180;
+          const distance = 200;
+          const x = 50 + distance * Math.cos(angle);
+          const y = 50 + distance * Math.sin(angle);
+          return (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0, x: "50vw", y: "50vh" }}
+              animate={{ scale: 1, opacity: 1, x: `${x}vw`, y: `${y}vh` }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.8, delay: i * 0.05 }}
+              className="absolute w-20 h-20 flex items-center justify-center text-4xl"
+              style={{ left: -40, top: -40 }}
+            >
+              {"✨⭐🎉🌈🎈💖🎊💫🎯🚀🧠🧩".split("")[i]}
+            </motion.div>
+          );
+        })}
+        
+        {/* Center explosion */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [0, 2, 1], opacity: [0, 1, 0] }}
+          transition={{ duration: 1.2 }}
+          className="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] text-7xl"
+        >
+          🎯
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
 import alphabetData from "@/data/english/alphabet.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
 
@@ -64,7 +102,7 @@ export default function AlphabetMatch() {
 
   const nextRound = useCallback(() => {
     if (roundRef.current >= TOTAL_ROUNDS) {
-      setGameOver(true);
+      setTimeout(() => setGameOver(true), 1500);
       return;
     }
     setQuestion(buildQuestion());
@@ -73,6 +111,8 @@ export default function AlphabetMatch() {
   }, []);
 
   const [showCelebration, setShowCelebration] = useState(false);
+  const [wrongAnswerAnimation, setWrongAnswerAnimation] = useState(false);
+  const [showCelebrationFull, setShowCelebrationFull] = useState(false);
 
   const handleSelect = (option: string) => {
     if (selected || !question) return;
@@ -84,13 +124,19 @@ export default function AlphabetMatch() {
       addStar(1);
       setShowReward(true);
       setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 1000);
+      setShowCelebrationFull(true);
+      setTimeout(() => {
+        setShowCelebration(false);
+        setShowCelebrationFull(false);
+      }, 1200);
     } else {
       playWrongSound();
+      setWrongAnswerAnimation(true);
+      setTimeout(() => setWrongAnswerAnimation(false), 600);
     }
     
     roundRef.current++;
-    setTimeout(nextRound, 1500);
+    setTimeout(nextRound, selected === question.correctAnswer ? 1500 : 1200);
   };
 
   const handleRestart = () => {
@@ -100,6 +146,8 @@ export default function AlphabetMatch() {
     setQuestion(buildQuestion());
     setSelected(null);
     setShowReward(false);
+    setWrongAnswerAnimation(false);
+    setShowCelebrationFull(false);
   };
 
   useEffect(() => {
@@ -181,6 +229,19 @@ export default function AlphabetMatch() {
 
         {/* StarReward动画 */}
         <StarReward show={showReward} />
+        
+        {/* 庆祝动画 */}
+        {showCelebrationFull && <CelebrationAnimation />}
+        
+        {/* 错误答案动画遮罩 */}
+        {wrongAnswerAnimation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-red-400/20 z-40 pointer-events-none"
+          />
+        )}
 
         {/* 选项按钮 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
