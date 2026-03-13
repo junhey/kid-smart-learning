@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
@@ -23,6 +23,44 @@ interface Question {
 
 const TOTAL_ROUNDS = 10;
 const CATEGORIES = ["animals", "fruits", "colors", "family", "objects"] as const;
+
+function CelebrationAnimation() {
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 pointer-events-none">
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180;
+          const distance = 200;
+          const x = 50 + distance * Math.cos(angle);
+          const y = 50 + distance * Math.sin(angle);
+          return (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0, x: "50vw", y: "50vh" }}
+              animate={{ scale: 1, opacity: 1, x: `${x}vw`, y: `${y}vh` }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.8, delay: i * 0.05 }}
+              className="absolute w-20 h-20 flex items-center justify-center text-4xl"
+              style={{ left: -40, top: -40 }}
+            >
+              {"✨⭐🎉🌈🎈💖🎊💫🎯🚀🧠🧩".split("")[i]}
+            </motion.div>
+          );
+        })}
+        
+        {/* Center explosion */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [0, 2, 1], opacity: [0, 1, 0] }}
+          transition={{ duration: 1.2 }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl"
+        >
+          🎯
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
 
 function getAllWords(): WordItem[] {
   const all: WordItem[] = [];
@@ -46,6 +84,8 @@ export default function WordMatch() {
   const [question, setQuestion] = useState<Question | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [showReward, setShowReward] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [wrongAnswerAnimation, setWrongAnswerAnimation] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const roundRef = useRef(0);
 
@@ -72,22 +112,28 @@ export default function WordMatch() {
       if (word.word === question?.target.word) {
         playCorrectSound();
         setShowReward(true);
+        setShowCelebration(true);
         addStar(1);
         recordCorrect();
         speak(`${word.word}! Correct!`, { rate: 0.9 });
         roundRef.current += 1;
-        setTimeout(() => {
-          setShowReward(false);
-          if (roundRef.current >= TOTAL_ROUNDS) {
-            setGameOver(true);
-          } else {
+        
+        if (roundRef.current >= TOTAL_ROUNDS) {
+          setTimeout(() => setGameOver(true), 2000);
+        } else {
+          setTimeout(() => {
+            setShowReward(false);
+            setShowCelebration(false);
             nextQuestion();
-          }
-        }, 1500);
+          }, 1500);
+        }
       } else {
         playWrongSound();
         recordWrong();
+        setWrongAnswerAnimation(true);
         setTimeout(() => {
+          setWrongAnswerAnimation(false);
+          setSelected(null);
           nextQuestion();
         }, 1200);
       }
@@ -114,6 +160,17 @@ export default function WordMatch() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      
+      {showCelebration && <CelebrationAnimation />}
+
+      {wrongAnswerAnimation && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-red-400/20 z-40 pointer-events-none"
+        />
+      )}
       <ProgressBar current={total} total={TOTAL_ROUNDS} />
 
       {question && (
@@ -146,26 +203,37 @@ export default function WordMatch() {
 
           {/* Options */}
           <div className="grid grid-cols-2 gap-4">
-            {question.options.map((opt) => {
-              const isCorrect = opt.word === question.target.word;
-              const isSelected = selected === opt.word;
-              let className = "answer-btn bg-white border-gray-200 text-gray-700";
-              if (isSelected && isCorrect) className = "answer-btn correct";
-              if (isSelected && !isCorrect) className = "answer-btn wrong";
+            <AnimatePresence mode="wait">
+              {question.options.map((opt, index) => {
+                const isCorrect = opt.word === question.target.word;
+                const isSelected = selected === opt.word;
+                let className = "answer-btn bg-white border-gray-200 text-gray-700";
+                if (isSelected && isCorrect) className = "answer-btn correct";
+                if (isSelected && !isCorrect) className = "answer-btn wrong";
 
-              return (
-                <motion.button
-                  key={opt.word}
-                  whileHover={!selected ? { scale: 1.05, y: -3 } : {}}
-                  whileTap={!selected ? { scale: 0.95 } : {}}
-                  onClick={() => handleSelect(opt)}
-                  className={className}
-                >
-                  <span className="text-3xl">{opt.emoji}</span>
-                  <span className="font-black capitalize text-xl">{opt.word}</span>
-                </motion.button>
-              );
-            })}
+                return (
+                  <motion.button
+                    key={`${opt.word}-${index}`}
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{
+                      opacity: 1,
+                      scale: isSelected && isCorrect ? [1, 1.15, 1] : 
+                             wrongAnswerAnimation && isSelected && !isCorrect ? [1, 0.95, 1.05, 0.95, 1] : 1,
+                      x: wrongAnswerAnimation && isSelected && !isCorrect ? [0, -5, 5, -5, 5, -5, 0] : 0
+                    }}
+                    exit={{ opacity: 0, scale: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={!selected ? { scale: 1.05, y: -3, boxShadow: "0 8px 25px rgba(0,0,0,0.15)" } : {}}
+                    whileTap={!selected ? { scale: 0.95 } : {}}
+                    onClick={() => handleSelect(opt)}
+                    className={className}
+                  >
+                    <span className="text-3xl">{opt.emoji}</span>
+                    <span className="font-black capitalize text-xl">{opt.word}</span>
+                  </motion.button>
+                );
+              })}
+            </AnimatePresence>
           </div>
         </motion.div>
       )}
