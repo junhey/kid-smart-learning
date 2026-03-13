@@ -5,9 +5,46 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
-import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+
+function CelebrationAnimation() {
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 pointer-events-none">
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180;
+          const distance = 200;
+          const x = 50 + distance * Math.cos(angle);
+          const y = 50 + distance * Math.sin(angle);
+          return (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0, x: "50vw", y: "50vh" }}
+              animate={{ scale: 1, opacity: 1, x: `${x}vw`, y: `${y}vh` }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.8, delay: i * 0.05 }}
+              className="absolute w-20 h-20 flex items-center justify-center text-4xl"
+              style={{ left: -40, top: -40 }}
+            >
+              {"✨⭐🎉🌈🎈💖🎊💫🎯🚀🧠🧩".split("")[i]}
+            </motion.div>
+          );
+        })}
+        
+        {/* Center explosion */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [0, 2, 1], opacity: [0, 1, 0] }}
+          transition={{ duration: 1.2 }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl text-yellow-400"
+        >
+          🎉
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
 
 type Shape = "circle" | "square" | "triangle" | "star";
 
@@ -33,6 +70,8 @@ export default function ShapeCount() {
   const [shapes, setShapes] = useState<{ type: Shape; id: number }[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showReward, setShowReward] = useState(false);
+  const [celebrateAnimation, setCelebrateAnimation] = useState(false);
+  const [wrongAnswerAnimation, setWrongAnswerAnimation] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const roundRef = useRef(0);
 
@@ -97,23 +136,25 @@ export default function ShapeCount() {
       playCorrectSound();
       recordCorrect();
       addStar(1);
-      setShowReward(true);
+      setCelebrateAnimation(true);
       roundRef.current += 1;
       
       if (roundRef.current >= TOTAL_ROUNDS) {
-        setTimeout(() => setGameOver(true), 1200);
+        setTimeout(() => setGameOver(true), 2000);
       } else {
         setTimeout(() => {
-          setShowReward(false);
+          setCelebrateAnimation(false);
           generateRound();
-        }, 1200);
+        }, 1500);
       }
     } else {
       playWrongSound();
       recordWrong();
+      setWrongAnswerAnimation(true);
       setTimeout(() => {
+        setWrongAnswerAnimation(false);
         setSelectedAnswer(null);
-      }, 1000);
+      }, 800);
     }
   };
 
@@ -141,7 +182,16 @@ export default function ShapeCount() {
         <ProgressBar current={roundRef.current + 1} total={TOTAL_ROUNDS} />
       </div>
 
-      {showReward && <StarReward show={true} onComplete={() => {}} />}
+      {celebrateAnimation && <CelebrationAnimation />}
+
+      {wrongAnswerAnimation && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-red-400/20 z-40 pointer-events-none"
+        />
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -180,7 +230,11 @@ export default function ShapeCount() {
             <motion.button
               key={option}
               initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
+              animate={{
+                opacity: 1,
+                scale: wrongAnswerAnimation && selectedAnswer === option && option !== targetCount ? [1, 0.95, 1.05, 0.95, 1] : 1,
+                x: wrongAnswerAnimation && selectedAnswer === option && option !== targetCount ? [0, -5, 5, -5, 5, -5, 0] : 0,
+              }}
               exit={{ opacity: 0, scale: 0 }}
               transition={{ delay: index * 0.1 }}
               whileHover={{ scale: 1.1 }}
@@ -190,8 +244,8 @@ export default function ShapeCount() {
               className={`py-6 px-8 rounded-2xl text-3xl font-black transition-all ${
                 selectedAnswer === option
                   ? selectedAnswer === targetCount
-                    ? "bg-green-400 text-white scale-110"
-                    : "bg-red-400 text-white scale-90"
+                    ? "bg-green-400 text-white shadow-xl scale-105"
+                    : "bg-red-400 text-white"
                   : "bg-gradient-to-br from-blue-400 to-cyan-400 text-white hover:shadow-xl"
               }`}
             >
