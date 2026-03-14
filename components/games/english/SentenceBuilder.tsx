@@ -28,6 +28,7 @@ export default function SentenceBuilder() {
   const [gameOver, setGameOver] = useState(false);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [usedIds, setUsedIds] = useState<Set<number>>(new Set());
+  const [showFullScreenCelebration, setShowFullScreenCelebration] = useState(false);
 
   const { addStar, resetStreak } = useReward();
   const { speakSentence } = useSound();
@@ -80,11 +81,13 @@ export default function SentenceBuilder() {
     if (userSentence === sentence.answer) {
       setFeedback("correct");
       setShowReward(true);
+      setShowFullScreenCelebration(true);
       addStar(1);
       recordCorrect();
       speakSentence(sentence.answer);
       setTimeout(() => {
         setShowReward(false);
+        setShowFullScreenCelebration(false);
         if (total + 1 >= TOTAL_ROUNDS) {
           setGameOver(true);
         } else {
@@ -122,6 +125,87 @@ export default function SentenceBuilder() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      
+      {/* Full-screen Duolingo-style celebration */}
+      <AnimatePresence>
+        {showFullScreenCelebration && (
+          <motion.div
+            className="fixed inset-0 z-50 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Green gradient overlay */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-br from-green-100 via-green-300 to-emerald-400"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              exit={{ opacity: 0 }}
+            />
+            
+            {/* Central celebration */}
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+            >
+              <motion.div
+                className="text-9xl"
+                animate={{
+                  scale: [1, 1.2, 1],
+                  rotate: [0, 10, -10, 0],
+                }}
+                transition={{
+                  duration: 0.5,
+                  repeat: 3,
+                  repeatType: "reverse"
+                }}
+              >
+                🌟
+              </motion.div>
+            </motion.div>
+            
+            {/* Confetti-like stars */}
+            {Array.from({ length: 12 }).map((_, i) => {
+              const angle = (i / 12) * 360;
+              const radian = (angle * Math.PI) / 180;
+              const distance = 300;
+              const x = Math.cos(radian) * distance;
+              const y = Math.sin(radian) * distance;
+              
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute text-5xl"
+                  style={{
+                    left: "50%",
+                    top: "50%",
+                    marginLeft: -20,
+                    marginTop: -20,
+                  }}
+                  initial={{ x: 0, y: 0, scale: 0, opacity: 0 }}
+                  animate={{
+                    x: [0, x * 0.3, x],
+                    y: [0, y * 0.3, y],
+                    scale: [0, 1.5, 0.8],
+                    opacity: [0, 1, 0],
+                    rotate: [0, 360],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    delay: i * 0.1,
+                    ease: "easeOut"
+                  }}
+                >
+                  ⭐
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-yellow-400 to-orange-400" />
 
       {sentence && (
@@ -162,7 +246,7 @@ export default function SentenceBuilder() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleWordClick(word, "placed")}
-                  className="bg-gradient-to-b from-orange-400 to-orange-500 text-white rounded-xl px-4 py-2 font-bold text-xl shadow-md border-b-4 border-orange-700"
+                  className="bg-gradient-to-b from-orange-400 to-orange-500 text-white rounded-2xl px-4 py-2 font-bold text-xl shadow-lg border-b-4 border-orange-700 hover:shadow-xl transition-shadow"
                 >
                   {word}
                 </motion.button>
@@ -183,7 +267,7 @@ export default function SentenceBuilder() {
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => handleWordClick(word, "shuffled")}
-                  className="bg-white text-gray-800 rounded-xl px-4 py-2 font-bold text-xl shadow-md border-b-4 border-gray-200 cursor-pointer"
+                  className="bg-white text-gray-800 rounded-2xl px-4 py-2 font-bold text-xl shadow-lg border-b-4 border-gray-200 cursor-pointer hover:shadow-xl hover:border-blue-200 transition-all"
                 >
                   {word}
                 </motion.button>
@@ -209,13 +293,29 @@ export default function SentenceBuilder() {
           </div>
 
           {feedback === "wrong" && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center text-red-500 font-bold text-lg mt-3"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center mt-3"
             >
-              Not quite! Try again! 💪
-            </motion.p>
+              <motion.p
+                className="text-red-500 font-bold text-lg"
+                animate={{
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ duration: 0.3, repeat: 2 }}
+              >
+                Not quite! Try again! 💪
+              </motion.p>
+              <motion.p
+                className="text-red-400 text-sm mt-1"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                Click words to rearrange them!
+              </motion.p>
+            </motion.div>
           )}
         </motion.div>
       )}
