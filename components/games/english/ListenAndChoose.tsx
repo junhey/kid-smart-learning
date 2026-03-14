@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
@@ -32,15 +32,54 @@ interface Question {
   options: WordItem[];
 }
 
+function CelebrationAnimation() {
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 pointer-events-none">
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180;
+          const distance = 200;
+          const x = 50 + distance * Math.cos(angle);
+          const y = 50 + distance * Math.sin(angle);
+          return (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0, x: "50vw", y: "50vh" }}
+              animate={{ scale: 1, opacity: 1, x: `${x}vw`, y: `${y}vh` }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.8, delay: i * 0.05 }}
+              className="absolute w-20 h-20 flex items-center justify-center text-4xl"
+              style={{ left: -40, top: -40 }}
+            >
+              {"✨⭐🎉🌈🎈💖🎊💫🎯🚀🧠🧩".split("")[i]}
+            </motion.div>
+          );
+        })}
+        
+        {/* Center explosion */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [0, 2, 1], opacity: [0, 1, 0] }}
+          transition={{ duration: 1.2 }}
+          className="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] text-7xl"
+        >
+          🎯
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
+
 export default function ListenAndChoose() {
   const [question, setQuestion] = useState<Question | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [showReward, setShowReward] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [hasSpoken, setHasSpoken] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const { addStar, resetStreak } = useReward();
-  const { speakWord } = useSound();
+  const { speakWord, playCorrectSound, playWrongSound } = useSound();
   const { correct, total, recordCorrect, recordWrong, reset } = useProgress(TOTAL_ROUNDS);
 
   const nextQuestion = useCallback(() => {
@@ -75,10 +114,13 @@ export default function ListenAndChoose() {
 
       if (opt.word === question?.target.word) {
         setShowReward(true);
+        setShowCelebration(true);
+        playCorrectSound();
         addStar(1);
         recordCorrect();
         setTimeout(() => {
           setShowReward(false);
+          setShowCelebration(false);
           if (total + 1 >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -86,12 +128,13 @@ export default function ListenAndChoose() {
           }
         }, 1500);
       } else {
+        playWrongSound();
         resetStreak();
         recordWrong();
         setTimeout(() => nextQuestion(), 1200);
       }
     },
-    [selected, hasSpoken, question, addStar, resetStreak, recordCorrect, recordWrong, nextQuestion, total]
+    [selected, hasSpoken, question, playCorrectSound, playWrongSound, addStar, resetStreak, recordCorrect, recordWrong, nextQuestion, total]
   );
 
   const handleRestart = useCallback(() => {
@@ -118,6 +161,7 @@ export default function ListenAndChoose() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      {showCelebration && <CelebrationAnimation />}
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-purple-400 to-pink-400" />
 
       {question && (
@@ -166,6 +210,20 @@ export default function ListenAndChoose() {
                   onClick={() => handleSelect(opt)}
                   className={cls}
                   disabled={!hasSpoken}
+                  animate={
+                    isSelected && isCorrect
+                      ? { scale: [1, 1.15, 1], rotate: [0, 5, -5, 0] }
+                      : isSelected && !isCorrect
+                      ? { x: [0, -10, 10, -10, 0] }
+                      : {}
+                  }
+                  transition={
+                    isSelected && isCorrect
+                      ? { duration: 0.6, times: [0, 0.4, 1] }
+                      : isSelected && !isCorrect
+                      ? { duration: 0.5 }
+                      : {}
+                  }
                 >
                   <div className="text-5xl">{opt.emoji}</div>
                 </motion.button>
