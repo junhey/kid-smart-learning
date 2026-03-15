@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
@@ -35,6 +35,44 @@ function buildQuestion(): Question {
     correctAnswer,
     options: shuffleArray([correctAnswer, ...wrongOptions])
   };
+}
+
+function CelebrationAnimation() {
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 pointer-events-none">
+        {[...Array(12)].map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180;
+          const distance = 200;
+          const x = 50 + distance * Math.cos(angle);
+          const y = 50 + distance * Math.sin(angle);
+          return (
+            <motion.div
+              key={i}
+              initial={{ scale: 0, opacity: 0, x: "50vw", y: "50vh" }}
+              animate={{ scale: 1, opacity: 1, x: `${x}vw`, y: `${y}vh` }}
+              exit={{ scale: 0, opacity: 0 }}
+              transition={{ duration: 0.8, delay: i * 0.05 }}
+              className="absolute w-20 h-20 flex items-center justify-center text-4xl"
+              style={{ left: -40, top: -40 }}
+            >
+              {"✨⭐🎉🌈🎈💖🎊💫🎯🚀🧠🧩".split("")[i]}
+            </motion.div>
+          );
+        })}
+        
+        {/* Center explosion */}
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [0, 2, 1], opacity: [0, 1, 0] }}
+          transition={{ duration: 1.2 }}
+          className="absolute left-1/2 top-1/2 translate-x-[-50%] translate-y-[-50%] text-7xl"
+        >
+          🎯
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
 }
 
 export default function AntonymsMatch() {
@@ -178,53 +216,7 @@ export default function AntonymsMatch() {
       </div>
 
       {showReward && <StarReward show={showReward} />}
-      
-      {/* Duolingo风格成功反馈 */}
-      {showCelebration && (
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: [0, 1.2, 1] }}
-            transition={{ duration: 0.6, times: [0, 0.7, 1] }}
-            className="rounded-full bg-green-400/90 shadow-2xl p-16"
-          >
-            <div className="text-white text-8xl">✓</div>
-          </motion.div>
-          
-          {/* 庆祝粒子效果 */}
-          {[0, 1, 2, 3, 4].map((i) => (
-            <motion.div
-              key={i}
-              initial={{ x: 0, y: 0, opacity: 0 }}
-              animate={{
-                x: Math.sin(i * 72) * 120,
-                y: Math.cos(i * 72) * 120,
-                opacity: [0, 1, 0],
-                scale: [0, 1, 0]
-              }}
-              transition={{ duration: 1.2, delay: i * 0.1 }}
-              className="absolute w-12 h-12 bg-yellow-300/80 rounded-full flex items-center justify-center"
-            >
-              <div className="text-2xl">✨</div>
-            </motion.div>
-          ))}
-          
-          {/* "正确!" 文字 */}
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="absolute bottom-1/4 text-5xl font-bold text-white bg-green-500/80 py-4 px-8 rounded-full shadow-lg"
-          >
-            正确!
-          </motion.div>
-        </motion.div>
-      )}
+      {showCelebration && <CelebrationAnimation />}
     </div>
   );
 }
