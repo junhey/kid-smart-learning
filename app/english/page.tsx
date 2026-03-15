@@ -10,6 +10,7 @@ import ListenAndChoose from "@/components/games/english/ListenAndChoose";
 import SentenceBuilder from "@/components/games/english/SentenceBuilder";
 import ColorPaint from "@/components/games/english/ColorPaint";
 import AntonymsMatch from "@/components/games/english/AntonymsMatch";
+import RhymeGame from "@/components/games/english/RhymeGame";
 import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
 import { Button } from "@/components/ui/Button";
@@ -71,6 +72,13 @@ const games = [
     emoji: "🔄",
     description: "找出相反的词！",
     component: AntonymsMatch,
+  },
+  {
+    id: "rhyme",
+    title: "押韵游戏",
+    emoji: "🎵",
+    description: "找出押韵的单词！",
+    component: RhymeGame,
   },
 ];
 
