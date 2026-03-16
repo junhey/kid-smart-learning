@@ -8,6 +8,8 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import AnimatedButton from "@/components/ui/AnimatedButton";
+import { useToast } from "@/components/ui/Toast";
 import { shuffleArray, randomInt } from "@/lib/gameUtils";
 
 const EMOJIS = ["🍎", "🐶", "⭐", "🌸", "🦋", "🎈", "🍊", "🐱", "🔵", "🍓"];
@@ -42,6 +44,7 @@ export default function NumberCount() {
   const { addStar } = useReward();
   const { speak, playCorrectSound, playWrongSound } = useSound();
   const { correct, total, recordCorrect, recordWrong, reset } = useProgress(TOTAL_ROUNDS);
+  const { showCorrect, showWrong, ToastComponent } = useToast();
 
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion());
@@ -56,7 +59,8 @@ export default function NumberCount() {
       if (num === question.count) {
         playCorrectSound();
         setShowReward(true);
-        setShowCelebration(true); // Duolingo风格庆祝动画
+        setShowCelebration(true);
+        showCorrect(`Perfect! ${num} is correct!`);
         addStar(1);
         recordCorrect();
         speak(`${num}! Correct!`, { rate: 0.9 });
@@ -68,19 +72,20 @@ export default function NumberCount() {
           } else {
             nextQuestion();
           }
-        }, 1800); // 等待时间延长让庆祝动画播放完成
+        }, 1800);
       } else {
         playWrongSound();
         recordWrong();
+        showWrong(`Not quite! Try counting again!`);
         speak(`Let's try again. Count again!`, { rate: 0.8 });
-        setWrongAnimation(true); // 触发表单项抖动动画
+        setWrongAnimation(true);
         setTimeout(() => {
           setWrongAnimation(false);
           nextQuestion();
-        }, 1600); // 等待抖动动画后再下一题
+        }, 1600);
       }
     },
-    [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion, total]
+    [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion, total, showCorrect, showWrong]
   );
 
   const handleRestart = () => {
@@ -102,6 +107,7 @@ export default function NumberCount() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <ToastComponent />
       <StarReward show={showReward} />
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-cyan-400 to-blue-400" />
 
@@ -192,20 +198,29 @@ export default function NumberCount() {
           {question.options.map((num) => {
             const isCorrect = num === question.count;
             const isSelected = selected === num;
-            let cls = "answer-btn bg-white border-gray-200 text-gray-800 text-4xl font-black";
-            if (isSelected && isCorrect) cls = "answer-btn correct text-4xl font-black";
-            if (isSelected && !isCorrect) cls = "answer-btn wrong text-4xl font-black";
 
             return (
-              <motion.button
+              <AnimatedButton
                 key={num}
-                whileHover={selected === null ? { scale: 1.08, y: -4 } : {}}
-                whileTap={selected === null ? { scale: 0.95 } : {}}
+                variant={
+                  isSelected && isCorrect
+                    ? "success"
+                    : isSelected && !isCorrect
+                    ? "danger"
+                    : "ghost"
+                }
+                size="lg"
                 onClick={() => handleSelect(num)}
-                className={cls}
+                disabled={selected !== null}
+                className={`text-4xl font-black h-24 ${
+                  isSelected && isCorrect ? "ring-4 ring-green-300" : ""
+                } ${
+                  isSelected && !isCorrect ? "ring-4 ring-red-300" : ""
+                }`}
+                playSound={false}
               >
                 {num}
-              </motion.button>
+              </AnimatedButton>
             );
           })}
         </motion.div>
