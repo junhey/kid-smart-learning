@@ -29,5 +29,15 @@
   { "word": "soft", "antonym": "hard" },
   { "word": "thick", "antonym": "thin" },
   { "word": "bright", "antonym": "dark" },
-  { "word": "brave", "antonym": "scared" }
+  { "word": "brave", "antonym": "scared" },
+  { "word": "loud", "antonym": "quiet" },
+  { "word": "sweet", "antonym": "sour" },
+  { "word": "sharp", "antonym": "blunt" },
+  { "word": "early", "antonym": "late" },
+  { "word": "safe", "antonym": "dangerous" },
+  { "word": "kind", "antonym": "mean" },
+  { "word": "awake", "antonym": "asleep" },
+  { "word": "warm", "antonym": "cool" },
+  { "word": "tight", "antonym": "loose" },
+  { "word": "beautiful", "antonym": "ugly" }
 ]
