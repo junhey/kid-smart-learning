@@ -12,6 +12,7 @@ import ClockGame from "@/components/games/math/ClockGame";
 import MissingNumber from "@/components/games/math/MissingNumber";
 import PatternMatch from "@/components/games/math/PatternMatch";
 import { SequenceSort } from "@/components/games/math/SequenceSort";
+import MemoryMatch from "@/components/games/math/MemoryMatch";
 import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
 
@@ -95,6 +96,14 @@ const games = [
     description: "Put items in the right order!",
     color: "from-blue-400 to-purple-500",
     component: SequenceSort,
+  },
+  {
+    id: "memory",
+    title: "Memory Match",
+    emoji: "🃏",
+    description: "Find matching pairs!",
+    color: "from-pink-400 to-purple-500",
+    component: MemoryMatch,
   },
 ];
 
