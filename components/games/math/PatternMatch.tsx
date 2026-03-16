@@ -44,6 +44,22 @@ const patterns: Pattern[] = [
   { sequence: ['🎈', '🎈', '🎁', '🎁', '🎈'], answer: '🎈', options: ['🎈', '🎁', '🎂', '🎉'] },
   { sequence: ['🔔', '🔔', '🎵', '🎵', '🔔'], answer: '🔔', options: ['🔔', '🎵', '🎶', '🎸'] },
   { sequence: ['🌊', '🌊', '🏔️', '🏔️', '🌊'], answer: '🌊', options: ['🌊', '🏔️', '🌋', '🏝️'] },
+  
+  // ABCD规律 (四元素循环)
+  { sequence: ['🌸', '🌺', '🌻', '🌹', '🌸'], answer: '🌺', options: ['🌸', '🌺', '🌻', '🌹'] },
+  { sequence: ['🎨', '🖌️', '✏️', '🖍️', '🎨'], answer: '🖌️', options: ['🎨', '🖌️', '✏️', '🖍️'] },
+  { sequence: ['🚗', '🚕', '🚙', '🚌', '🚗'], answer: '🚕', options: ['🚗', '🚕', '🚙', '🚌'] },
+  
+  // ABBA规律 (镜像对称)
+  { sequence: ['🍎', '🍌', '🍌', '🍎', '🍎'], answer: '🍌', options: ['🍎', '🍌', '🍇', '🍓'] },
+  { sequence: ['🐘', '🦒', '🦒', '🐘', '🐘'], answer: '🦒', options: ['🐘', '🦒', '🦓', '🦏'] },
+  
+  // AAB + AAB循环 (复合规律)
+  { sequence: ['🔵', '🔵', '🔴', '🔵', '🔵'], answer: '🔴', options: ['🔵', '🔴', '🟡', '🟢'] },
+  { sequence: ['🎯', '🎯', '🎪', '🎯', '🎯'], answer: '🎪', options: ['🎯', '🎪', '🎭', '🎬'] },
+  
+  // 递增规律 (数字序列)
+  { sequence: ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'], answer: '6️⃣', options: ['5️⃣', '6️⃣', '7️⃣', '8️⃣'] },
 ];
 
 export const PatternMatch: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
