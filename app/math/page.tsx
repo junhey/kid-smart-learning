@@ -9,6 +9,7 @@ import CompareNumbers from "@/components/games/math/CompareNumbers";
 import MathShooter from "@/components/games/math/MathShooter";
 import ShapeCount from "@/components/games/math/ShapeCount";
 import ClockGame from "@/components/games/math/ClockGame";
+import MissingNumber from "@/components/games/math/MissingNumber";
 import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
 
@@ -69,6 +70,14 @@ const games = [
     color: "from-yellow-400 to-orange-500",
     component: ClockGame,
   },
+  {
+    id: "missing",
+    title: "Missing Number",
+    emoji: "❓",
+    description: "Find the missing number in the sequence!",
+    color: "from-teal-400 to-cyan-500",
+    component: MissingNumber,
+  },
 ];
 
 export default function MathPage() {
@@ -82,7 +91,7 @@ export default function MathPage() {
     return (
       <div className="min-h-screen p-4">
         <Navigation onBack={() => setActiveGame(null)} title="Math Games" />
-        <ActiveGameComponent />
+        <ActiveGameComponent onComplete={() => setActiveGame(null)} />
       </div>
     );
   }
