@@ -25,6 +25,11 @@ const sequenceData: SequenceData[] = [
   { type: 'alphabet', items: ['E', 'F', 'G', 'H'], instruction: '按字母顺序排序' },
   { type: 'size', items: ['🐜', '🐕', '🐘', '🦒'], instruction: '按体型从小到大排序' },
   { type: 'size', items: ['⚪', '🔵', '🟢', '🔴'], instruction: '按大小从小到大排序' },
+  { type: 'size', items: ['🍎', '🍊', '🍌', '🍉'], instruction: '按水果大小从小到大排序' },
+  { type: 'size', items: ['🌕', '🌖', '🌗', '🌘'], instruction: '按月相变化排序' },
+  { type: 'size', items: ['🌱', '🌿', '🌳', '🌲'], instruction: '按植物生长排序' },
+  { type: 'size', items: ['👶', '👧', '👨', '👴'], instruction: '按年龄从小到大排序' },
+  { type: 'size', items: ['🥚', '🐣', '🐥', '🐔'], instruction: '按生命周期排序' },
 ];
 
 export function SequenceSort({ onComplete }: { onComplete: () => void }) {
