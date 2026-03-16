@@ -11,19 +11,39 @@ interface Pattern {
 }
 
 const patterns: Pattern[] = [
-  // 形状规律
+  // AB规律 (简单交替)
   { sequence: ['🔴', '🔵', '🔴', '🔵', '🔴'], answer: '🔵', options: ['🔵', '🔴', '🟡', '🟢'] },
-  { sequence: ['⭐', '⭐', '🌙', '⭐', '⭐'], answer: '🌙', options: ['⭐', '🌙', '☀️', '🌟'] },
   { sequence: ['🐶', '🐱', '🐶', '🐱', '🐶'], answer: '🐱', options: ['🐱', '🐶', '🐭', '🐰'] },
-  
-  // 数字规律
   { sequence: ['1️⃣', '2️⃣', '1️⃣', '2️⃣', '1️⃣'], answer: '2️⃣', options: ['1️⃣', '2️⃣', '3️⃣', '4️⃣'] },
-  { sequence: ['🍎', '🍎', '🍌', '🍎', '🍎'], answer: '🍌', options: ['🍎', '🍌', '🍇', '🍓'] },
-  
-  // ABC规律
   { sequence: ['🅰️', '🅱️', '🅰️', '🅱️', '🅰️'], answer: '🅱️', options: ['🅰️', '🅱️', '🅲️', '🅳️'] },
-  { sequence: ['🟥', '🟦', '🟩', '🟥', '🟦'], answer: '🟩', options: ['🟥', '🟦', '🟩', '🟨'] },
   { sequence: ['🌸', '🌺', '🌸', '🌺', '🌸'], answer: '🌺', options: ['🌸', '🌺', '🌻', '🌹'] },
+  
+  // AAB规律 (双A单B)
+  { sequence: ['⭐', '⭐', '🌙', '⭐', '⭐'], answer: '🌙', options: ['⭐', '🌙', '☀️', '🌟'] },
+  { sequence: ['🍎', '🍎', '🍌', '🍎', '🍎'], answer: '🍌', options: ['🍎', '🍌', '🍇', '🍓'] },
+  { sequence: ['🐻', '🐻', '🐰', '🐻', '🐻'], answer: '🐰', options: ['🐻', '🐰', '🦊', '🐼'] },
+  { sequence: ['🟦', '🟦', '🟨', '🟦', '🟦'], answer: '🟨', options: ['🟦', '🟨', '🟥', '🟩'] },
+  { sequence: ['🏀', '🏀', '⚽', '🏀', '🏀'], answer: '⚽', options: ['🏀', '⚽', '🏈', '⚾'] },
+  
+  // ABB规律 (单A双B)
+  { sequence: ['🔴', '🔵', '🔵', '🔴', '🔵'], answer: '🔵', options: ['🔴', '🔵', '🟡', '🟢'] },
+  { sequence: ['🌻', '🌹', '🌹', '🌻', '🌹'], answer: '🌹', options: ['🌻', '🌹', '🌺', '🌸'] },
+  { sequence: ['🐸', '🐢', '🐢', '🐸', '🐢'], answer: '🐢', options: ['🐸', '🐢', '🐍', '🦎'] },
+  { sequence: ['🍓', '🍇', '🍇', '🍓', '🍇'], answer: '🍇', options: ['🍓', '🍇', '🍊', '🍋'] },
+  { sequence: ['⚡', '🌟', '🌟', '⚡', '🌟'], answer: '🌟', options: ['⚡', '🌟', '💫', '✨'] },
+  
+  // ABC规律 (三元素循环)
+  { sequence: ['🟥', '🟦', '🟩', '🟥', '🟦'], answer: '🟩', options: ['🟥', '🟦', '🟩', '🟨'] },
+  { sequence: ['🍎', '🍌', '🍇', '🍎', '🍌'], answer: '🍇', options: ['🍎', '🍌', '🍇', '🍓'] },
+  { sequence: ['🐕', '🐈', '🐇', '🐕', '🐈'], answer: '🐇', options: ['🐕', '🐈', '🐇', '🐦'] },
+  { sequence: ['1️⃣', '2️⃣', '3️⃣', '1️⃣', '2️⃣'], answer: '3️⃣', options: ['1️⃣', '2️⃣', '3️⃣', '4️⃣'] },
+  { sequence: ['🌞', '🌙', '⭐', '🌞', '🌙'], answer: '⭐', options: ['🌞', '🌙', '⭐', '☁️'] },
+  
+  // AABB规律 (双双交替)
+  { sequence: ['🦋', '🦋', '🐝', '🐝', '🦋'], answer: '🦋', options: ['🦋', '🐝', '🐞', '🦗'] },
+  { sequence: ['🎈', '🎈', '🎁', '🎁', '🎈'], answer: '🎈', options: ['🎈', '🎁', '🎂', '🎉'] },
+  { sequence: ['🔔', '🔔', '🎵', '🎵', '🔔'], answer: '🔔', options: ['🔔', '🎵', '🎶', '🎸'] },
+  { sequence: ['🌊', '🌊', '🏔️', '🏔️', '🌊'], answer: '🌊', options: ['🌊', '🏔️', '🌋', '🏝️'] },
 ];
 
 export const PatternMatch: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
