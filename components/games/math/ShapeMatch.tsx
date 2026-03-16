@@ -8,6 +8,8 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import AnimatedButton from "@/components/ui/AnimatedButton";
+import { useToast } from "@/components/ui/Toast";
 import shapesData from "@/data/math/shapes.json";
 import { shuffleArray } from "@/lib/gameUtils";
 
@@ -125,6 +127,7 @@ export default function ShapeMatch() {
   const { addStar } = useReward();
   const { speak, playCorrectSound, playWrongSound } = useSound();
   const { correct, total, recordCorrect, recordWrong, reset } = useProgress(TOTAL_ROUNDS);
+  const { showCorrect, showWrong, ToastComponent } = useToast();
 
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion(shapes));
@@ -146,6 +149,7 @@ export default function ShapeMatch() {
         addStar(1);
         recordCorrect();
         speak(`${shape.name}! Correct!`, { rate: 0.9 });
+        showCorrect(`Perfect! You found the ${shape.name}!`);
         roundRef.current += 1;
         setTimeout(() => {
           setShowReward(false);
@@ -161,10 +165,11 @@ export default function ShapeMatch() {
         setFeedback("wrong");
         recordWrong();
         speak(`Try again!`, { rate: 0.9 });
+        showWrong(`Not quite! The answer is ${question.target.name}.`);
         setTimeout(() => nextQuestion(), 1200);
       }
     },
-    [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion]
+    [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion, showCorrect, showWrong]
   );
 
   const handleRestart = useCallback(() => {
@@ -186,6 +191,7 @@ export default function ShapeMatch() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <ToastComponent />
       <StarReward show={showReward} />
       {/* Celebration animation */}
       {showCelebration && (
@@ -246,17 +252,22 @@ export default function ShapeMatch() {
             const isSelected = selected === shape.name;
 
             return (
-              <motion.button
+              <AnimatedButton
                 key={shape.name}
-                whileHover={!selected ? { scale: 1.05, y: -3 } : {}}
-                whileTap={!selected ? { scale: 0.95 } : {}}
+                variant={
+                  feedback === "correct" && isSelected && isCorrect
+                    ? "success"
+                    : feedback === "wrong" && isSelected && !isCorrect
+                    ? "danger"
+                    : "ghost"
+                }
+                size="lg"
+                playSound={false}
                 onClick={() => handleSelect(shape)}
+                disabled={!!selected}
                 className={`
-                  min-h-[100px] rounded-3xl p-4 shadow-lg flex flex-col items-center justify-center gap-2
-                  border-4 transition-all cursor-pointer
-                  ${feedback === "correct" && isSelected && isCorrect ? "bg-green-100 border-green-500 scale-110" : ""}
-                  ${feedback === "wrong" && isSelected && !isCorrect ? "bg-red-100 border-red-500" : ""}
-                  ${!isSelected ? "bg-white border-gray-200 hover:border-purple-300" : ""}
+                  min-h-[100px] relative
+                  ${feedback === "correct" && isSelected && isCorrect ? "scale-110" : ""}
                 `}
                 animate={
                   feedback === "wrong" && isSelected && !isCorrect
@@ -295,35 +306,11 @@ export default function ShapeMatch() {
                     ✗
                   </motion.div>
                 )}
-              </motion.button>
+              </AnimatedButton>
             );
           })}
         </div>
       </motion.div>
-
-      {/* Feedback messages */}
-      <AnimatePresence>
-        {feedback === "wrong" && (
-          <motion.p
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-center text-red-500 font-bold text-xl mt-4"
-          >
-            Not that shape! Try again! 💪
-          </motion.p>
-        )}
-        {feedback === "correct" && (
-          <motion.p
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-center text-green-600 font-bold text-xl mt-4"
-          >
-            Perfect! You found the {question.target.name}! 🎉
-          </motion.p>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
