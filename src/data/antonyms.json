@@ -39,5 +39,12 @@
   { "word": "awake", "antonym": "asleep" },
   { "word": "warm", "antonym": "cool" },
   { "word": "tight", "antonym": "loose" },
-  { "word": "beautiful", "antonym": "ugly" }
+  { "word": "beautiful", "antonym": "ugly" },
+  { "word": "tall", "antonym": "short" },
+  { "word": "fresh", "antonym": "stale" },
+  { "word": "silly", "antonym": "serious" },
+  { "word": "noisy", "antonym": "silent" },
+  { "word": "hungry", "antonym": "full" },
+  { "word": "busy", "antonym": "idle" },
+  { "word": "cheap", "antonym": "expensive" }
 ]
