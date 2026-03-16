@@ -8,6 +8,8 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import AnimatedButton from "@/components/ui/AnimatedButton";
+import Toast from "@/components/ui/Toast";
 import { shuffleArray, randomInt } from "@/lib/gameUtils";
 
 const TOTAL_ROUNDS = 10;
@@ -66,7 +68,7 @@ export default function MathShooter() {
   const [showReward, setShowReward] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const { addStar } = useReward();
   const { speak, playCorrectSound, playWrongSound } = useSound();
@@ -74,7 +76,7 @@ export default function MathShooter() {
 
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion(nextId));
-    setFeedback(null);
+    setToastMessage(null);
     setShowCelebration(false);
   }, [nextId]);
 
@@ -91,7 +93,7 @@ export default function MathShooter() {
 
   const handleShoot = useCallback(
     (opt: Question["options"][0]) => {
-      if (feedback || opt.popped) return;
+      if (toastMessage || opt.popped) return;
 
       setQuestion((prev) => ({
         ...prev,
@@ -100,7 +102,7 @@ export default function MathShooter() {
 
       if (opt.value === question.answer) {
         playCorrectSound();
-        setFeedback("correct");
+        setToastMessage(`${opt.value}! Perfect shot! 🎯`);
         setShowReward(true);
         setShowCelebration(true);
         addStar(1);
@@ -118,7 +120,7 @@ export default function MathShooter() {
         }, 1500);
       } else {
         playWrongSound();
-        setFeedback("wrong");
+        setToastMessage(`Not quite! The answer is ${question.answer}. Try again! 💪`);
         recordWrong();
         speak(`Try again!`, { rate: 0.9 });
         setTimeout(() => {
@@ -126,11 +128,11 @@ export default function MathShooter() {
             ...prev,
             options: prev.options.map((o) => (o.id === opt.id ? { ...o, popped: false } : o)),
           }));
-          setFeedback(null);
+          setToastMessage(null);
         }, 800);
       }
     },
-    [feedback, question.answer, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion]
+    [toastMessage, question.answer, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion]
   );
 
   if (gameOver) {
@@ -147,6 +149,13 @@ export default function MathShooter() {
   return (
     <div className="max-w-3xl mx-auto">
       <StarReward show={showReward} />
+      {toastMessage && (
+        <Toast
+          show={true}
+          message={toastMessage}
+          type={toastMessage.includes("Perfect") ? "success" : "wrong"}
+        />
+      )}
       {/* Celebration animation */}
       {showCelebration && (
         <motion.div
@@ -197,12 +206,13 @@ export default function MathShooter() {
             </span>{" "}
             {question.b} = <span className="text-pink-500">?</span>
           </div>
-          <button
+          <AnimatedButton
             onClick={() => speak(`${question.a} ${question.isAddition ? "plus" : "minus"} ${question.b} equals?`, { rate: 0.8 })}
-            className="mt-2 bg-pink-100 hover:bg-pink-200 rounded-full px-4 py-2 text-pink-700 font-bold transition-colors"
+            variant="primary"
+            className="mt-2"
           >
             🔊 Hear it!
-          </button>
+          </AnimatedButton>
         </div>
       </motion.div>
 
@@ -234,18 +244,7 @@ export default function MathShooter() {
                 whileHover={{ scale: 1.15 }}
               >
                 <motion.div
-                  className={`w-16 h-16 bg-gradient-to-b ${opt.color} rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
-                    feedback === "wrong" && opt.value !== question.answer ? "bg-gradient-to-b from-red-400 to-red-600 animate-pulse" : ""
-                  } ${
-                    feedback === "correct" && opt.value === question.answer ? "bg-gradient-to-b from-green-400 to-green-600 scale-125" : ""
-                  }`}
-                  animate={feedback === "wrong" && opt.value !== question.answer ? {
-                    x: [0, -5, 5, -5, 5, 0],
-                  } : {}}
-                  transition={feedback === "wrong" && opt.value !== question.answer ? {
-                    duration: 0.5,
-                    repeat: 0,
-                  } : {}}
+                  className={`w-16 h-16 bg-gradient-to-b ${opt.color} rounded-full flex items-center justify-center shadow-lg`}
                 >
                   <span className="text-white font-black text-2xl">{opt.value}</span>
                 </motion.div>
@@ -265,19 +264,6 @@ export default function MathShooter() {
           )}
         </AnimatePresence>
       </div>
-
-      <AnimatePresence>
-        {feedback === "wrong" && (
-          <motion.p
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-center text-red-500 font-bold text-xl mt-3"
-          >
-            Not that one! Try again! 💪
-          </motion.p>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
