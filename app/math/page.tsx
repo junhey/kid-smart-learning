@@ -10,6 +10,7 @@ import MathShooter from "@/components/games/math/MathShooter";
 import ShapeCount from "@/components/games/math/ShapeCount";
 import ClockGame from "@/components/games/math/ClockGame";
 import MissingNumber from "@/components/games/math/MissingNumber";
+import PatternMatch from "@/components/games/math/PatternMatch";
 import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
 
@@ -77,6 +78,14 @@ const games = [
     description: "Find the missing number in the sequence!",
     color: "from-teal-400 to-cyan-500",
     component: MissingNumber,
+  },
+  {
+    id: "pattern",
+    title: "Pattern Match",
+    emoji: "🔍",
+    description: "What comes next in the pattern?",
+    color: "from-purple-400 to-pink-500",
+    component: PatternMatch,
   },
 ];
 
