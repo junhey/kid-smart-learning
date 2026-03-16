@@ -8,6 +8,8 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import AnimatedButton from "@/components/ui/AnimatedButton";
+import Toast from "@/components/ui/Toast";
 import { randomInt } from "@/lib/gameUtils";
 
 const TOTAL_ROUNDS = 10;
@@ -31,7 +33,8 @@ export default function CompareNumbers() {
   const [showReward, setShowReward] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastType, setToastType] = useState<"success" | "correct" | "wrong" | "info">("success");
   const roundRef = useRef(0);
 
   const { addStar } = useReward();
@@ -41,8 +44,8 @@ export default function CompareNumbers() {
   const nextQuestion = useCallback(() => {
     setQuestion(buildQuestion());
     setSelected(null);
-    setFeedback(null);
     setShowCelebration(false);
+    setToastMessage("");
   }, []);
 
   const handleRestart = useCallback(() => {
@@ -56,7 +59,6 @@ export default function CompareNumbers() {
     (choice: "greater" | "less") => {
       if (selected) return;
       setSelected(choice);
-      setFeedback(choice === question.correct ? "correct" : "wrong");
 
       if (choice === question.correct) {
         playCorrectSound();
@@ -66,8 +68,10 @@ export default function CompareNumbers() {
         recordCorrect();
         const msg =
           question.correct === "greater"
-            ? `${question.a} is greater than ${question.b}!`
-            : `${question.a} is less than ${question.b}!`;
+            ? `Perfect! ${question.a} is greater than ${question.b}!`
+            : `Perfect! ${question.a} is less than ${question.b}!`;
+        setToastMessage(msg);
+        setToastType("success");
         speak(msg, { rate: 0.9 });
         roundRef.current += 1;
         setTimeout(() => {
@@ -82,6 +86,12 @@ export default function CompareNumbers() {
       } else {
         playWrongSound();
         recordWrong();
+        const correctMsg =
+          question.correct === "greater"
+            ? `Not quite! The correct answer is ${question.a} > ${question.b}.`
+            : `Not quite! The correct answer is ${question.a} < ${question.b}.`;
+        setToastMessage(correctMsg);
+        setToastType("wrong");
         speak(`Try again!`, { rate: 0.9 });
         setTimeout(() => nextQuestion(), 1200);
       }
@@ -103,6 +113,7 @@ export default function CompareNumbers() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      <Toast message={toastMessage} type={toastType} show={!!toastMessage} onClose={() => setToastMessage("")} />
       {/* Celebration animation */}
       {showCelebration && (
         <motion.div
@@ -174,19 +185,18 @@ export default function CompareNumbers() {
           {(["greater", "less"] as const).map((choice) => {
             const isCorrect = choice === question.correct;
             const isSelected = selected === choice;
-            let cls = "answer-btn border-gray-200";
-            if (choice === "greater") cls += " bg-gradient-to-b from-orange-100 to-orange-200";
-            else cls += " bg-gradient-to-b from-blue-100 to-blue-200";
-            if (isSelected && isCorrect) cls = "answer-btn correct";
-            if (isSelected && !isCorrect) cls = "answer-btn wrong";
+            
+            let variant: "primary" | "success" | "danger" = "primary";
+            if (isSelected && isCorrect) variant = "success";
+            if (isSelected && !isCorrect) variant = "danger";
 
             return (
-              <motion.button
+              <AnimatedButton
                 key={choice}
-                whileHover={!selected ? { scale: 1.05, y: -3 } : {}}
-                whileTap={!selected ? { scale: 0.95 } : {}}
                 onClick={() => handleSelect(choice)}
-                className={cls}
+                variant={variant}
+                disabled={!!selected}
+                className={choice === "greater" ? "bg-gradient-to-b from-orange-100 to-orange-200" : "bg-gradient-to-b from-blue-100 to-blue-200"}
               >
                 <div className="text-3xl mb-1">
                   {choice === "greater" ? ">" : "<"}
@@ -197,7 +207,7 @@ export default function CompareNumbers() {
                 <div className="text-sm font-semibold text-gray-600">
                   {question.a} is {choice} than {question.b}
                 </div>
-              </motion.button>
+              </AnimatedButton>
             );
           })}
         </div>
