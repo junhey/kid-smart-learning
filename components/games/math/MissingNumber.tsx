@@ -24,31 +24,62 @@ const MissingNumber: React.FC<MissingNumberProps> = ({ onComplete }) => {
 
   const totalRounds = 5;
 
-  // 生成题目：1-5, 1-10, 或简单的skip counting
+  // 生成题目：多种数字序列模式
   const generateQuestion = (): Question => {
-    const difficulty = Math.random();
+    const patternType = Math.floor(Math.random() * 10); // 0-9 共10种模式
     let start: number, end: number, step: number;
 
-    if (difficulty < 0.5) {
-      // 简单：1-5
+    if (patternType < 2) {
+      // 模式1-2: 简单连续 1-5 或 1-6
       start = 1;
-      end = 5;
+      end = patternType === 0 ? 5 : 6;
       step = 1;
-    } else if (difficulty < 0.8) {
-      // 中等：1-10
+    } else if (patternType < 4) {
+      // 模式3-4: 中等连续 1-8 或 1-10
       start = 1;
-      end = Math.floor(Math.random() * 5) + 6; // 6-10
+      end = patternType === 2 ? 8 : 10;
       step = 1;
+    } else if (patternType === 4) {
+      // 模式5: 偶数 2,4,6,8,10
+      start = 2;
+      end = 10;
+      step = 2;
+    } else if (patternType === 5) {
+      // 模式6: 奇数 1,3,5,7,9
+      start = 1;
+      end = 9;
+      step = 2;
+    } else if (patternType === 6) {
+      // 模式7: 5的倍数 5,10,15,20
+      start = 5;
+      end = 20;
+      step = 5;
+    } else if (patternType === 7) {
+      // 模式8: 10的倍数 10,20,30,40
+      start = 10;
+      end = 40;
+      step = 10;
+    } else if (patternType === 8) {
+      // 模式9: 3的倍数 3,6,9,12,15
+      start = 3;
+      end = 15;
+      step = 3;
     } else {
-      // 稍难：2的倍数或5的倍数
-      step = Math.random() < 0.5 ? 2 : 5;
-      start = step;
-      end = step * 5;
+      // 模式10: 倒数序列 10,9,8,7,6
+      start = 10;
+      end = 6;
+      step = -1;
     }
 
     const sequence: number[] = [];
-    for (let i = start; i <= end; i += step) {
-      sequence.push(i);
+    if (step > 0) {
+      for (let i = start; i <= end; i += step) {
+        sequence.push(i);
+      }
+    } else {
+      for (let i = start; i >= end; i += step) {
+        sequence.push(i);
+      }
     }
 
     // 随机选择一个位置作为缺失（不选首尾）
