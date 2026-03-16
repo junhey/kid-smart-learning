@@ -23,17 +23,55 @@ interface Question {
 }
 
 function buildQuestion(): Question {
-  const isAddition = Math.random() > 0.4;
-  let a: number, b: number, answer: number;
-  if (isAddition) {
-    a = randomInt(1, 10);
-    b = randomInt(1, 10 - a);
-    answer = a + b;
-  } else {
-    answer = randomInt(1, 8);
-    b = randomInt(1, 8);
-    a = answer + b;
-  }
+  const patterns = [
+    // Pattern 1: Simple addition (1-5 + 1-5, answer ≤ 10)
+    () => {
+      const a = randomInt(1, 5);
+      const b = randomInt(1, Math.min(5, 10 - a));
+      return { a, b, answer: a + b, isAddition: true };
+    },
+    // Pattern 2: Addition to 10 (e.g., 7+3, 6+4)
+    () => {
+      const a = randomInt(4, 9);
+      const b = 10 - a;
+      return { a, b, answer: 10, isAddition: true };
+    },
+    // Pattern 3: Larger single-digit addition (5-9 + 1-9, answer ≤ 18)
+    () => {
+      const a = randomInt(5, 9);
+      const b = randomInt(1, 9);
+      return { a, b, answer: a + b, isAddition: true };
+    },
+    // Pattern 4: Addition with carry (e.g., 8+7=15, 9+6=15)
+    () => {
+      const a = randomInt(6, 9);
+      const b = randomInt(6, 9);
+      return { a, b, answer: a + b, isAddition: true };
+    },
+    // Pattern 5: Simple subtraction (5-10 minus 1-5)
+    () => {
+      const answer = randomInt(1, 8);
+      const b = randomInt(1, 5);
+      const a = answer + b;
+      return { a, b, answer, isAddition: false };
+    },
+    // Pattern 6: Subtraction from 10 (10-3, 10-7, etc.)
+    () => {
+      const b = randomInt(1, 9);
+      const a = 10;
+      return { a, b, answer: a - b, isAddition: false };
+    },
+    // Pattern 7: Larger subtraction (11-18 minus 1-9)
+    () => {
+      const a = randomInt(11, 18);
+      const b = randomInt(1, Math.min(9, a - 1));
+      return { a, b, answer: a - b, isAddition: false };
+    },
+  ];
+
+  const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+  const { a, b, answer, isAddition } = pattern();
+
   const emoji = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
   const wrongSet = new Set<number>();
   while (wrongSet.size < 3) {
