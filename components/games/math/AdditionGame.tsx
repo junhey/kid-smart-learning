@@ -8,6 +8,8 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import AnimatedButton from "@/components/ui/AnimatedButton";
+import Toast from "@/components/ui/Toast";
 import { shuffleArray, randomInt } from "@/lib/gameUtils";
 
 const EMOJIS = ["🍎", "🐶", "⭐", "🌸", "🦋", "🎈", "🍊", "🐱", "🔵", "🍓"];
@@ -88,6 +90,7 @@ export default function AdditionGame() {
   const [showReward, setShowReward] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: "correct" | "wrong" } | null>(null);
   const roundRef = useRef(0);
 
   const { addStar } = useReward();
@@ -111,10 +114,12 @@ export default function AdditionGame() {
         setShowCelebration(true);
         addStar(1);
         recordCorrect();
+        setToast({ message: `Perfect! ${num} is correct!`, type: "correct" });
         speak(`${num}! Correct!`, { rate: 0.9 });
         roundRef.current += 1;
         setTimeout(() => {
           setShowReward(false);
+          setToast(null);
           if (roundRef.current >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -124,8 +129,12 @@ export default function AdditionGame() {
       } else {
         playWrongSound();
         recordWrong();
+        setToast({ message: `Not quite! The answer is ${question.answer}`, type: "wrong" });
         speak(`Try again!`, { rate: 0.9 });
-        setTimeout(() => nextQuestion(), 1200);
+        setTimeout(() => {
+          setToast(null);
+          nextQuestion();
+        }, 1200);
       }
     },
     [selected, question, addStar, recordCorrect, recordWrong, speak, playCorrectSound, playWrongSound, nextQuestion]
@@ -152,6 +161,7 @@ export default function AdditionGame() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      <Toast message={toast?.message || ""} type={toast?.type || "correct"} show={!!toast} />
       {/* Celebration animation */}
       {showCelebration && (
         <motion.div
@@ -230,20 +240,17 @@ export default function AdditionGame() {
           {question.options.map((num) => {
             const isCorrect = num === question.answer;
             const isSelected = selected === num;
-            let cls = "answer-btn bg-white border-gray-200 text-gray-800 text-4xl font-black";
-            if (isSelected && isCorrect) cls = "answer-btn correct text-4xl font-black";
-            if (isSelected && !isCorrect) cls = "answer-btn wrong text-4xl font-black";
 
             return (
-              <motion.button
+              <AnimatedButton
                 key={num}
-                whileHover={selected === null ? { scale: 1.08, y: -4 } : {}}
-                whileTap={selected === null ? { scale: 0.95 } : {}}
+                variant={isSelected ? (isCorrect ? "success" : "danger") : "ghost"}
                 onClick={() => handleSelect(num)}
-                className={cls}
+                disabled={selected !== null}
+                className="h-24 text-4xl font-black"
               >
                 {num}
-              </motion.button>
+              </AnimatedButton>
             );
           })}
         </div>
