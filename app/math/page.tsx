@@ -11,6 +11,7 @@ import ShapeCount from "@/components/games/math/ShapeCount";
 import ClockGame from "@/components/games/math/ClockGame";
 import MissingNumber from "@/components/games/math/MissingNumber";
 import PatternMatch from "@/components/games/math/PatternMatch";
+import { SequenceSort } from "@/components/games/math/SequenceSort";
 import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
 
@@ -86,6 +87,14 @@ const games = [
     description: "What comes next in the pattern?",
     color: "from-purple-400 to-pink-500",
     component: PatternMatch,
+  },
+  {
+    id: "sequence",
+    title: "Sequence Sort",
+    emoji: "🔢",
+    description: "Put items in the right order!",
+    color: "from-blue-400 to-purple-500",
+    component: SequenceSort,
   },
 ];
 
