@@ -208,5 +208,53 @@
     "words": ["Let's", "go", "home"],
     "answer": "Let's go home",
     "emoji": "🏠"
+  },
+  {
+    "id": 36,
+    "words": ["I", "am", "happy", "today"],
+    "answer": "I am happy today",
+    "emoji": "😊"
+  },
+  {
+    "id": 37,
+    "words": ["See", "you", "tomorrow"],
+    "answer": "See you tomorrow",
+    "emoji": "👋"
+  },
+  {
+    "id": 38,
+    "words": ["How", "are", "you"],
+    "answer": "How are you",
+    "emoji": "❤️"
+  },
+  {
+    "id": 39,
+    "words": ["I", "love", "music"],
+    "answer": "I love music",
+    "emoji": "🎶"
+  },
+  {
+    "id": 40,
+    "words": ["The", "car", "is", "red"],
+    "answer": "The car is red",
+    "emoji": "🚗"
+  },
+  {
+    "id": 41,
+    "words": ["I", "brush", "my", "teeth"],
+    "answer": "I brush my teeth",
+    "emoji": "🪥"
+  },
+  {
+    "id": 42,
+    "words": ["Good", "night", "dad"],
+    "answer": "Good night dad",
+    "emoji": "🌙"
+  },
+  {
+    "id": 43,
+    "words": ["I", "am", "five", "years", "old"],
+    "answer": "I am five years old",
+    "emoji": "5️⃣"
   }
 ]
