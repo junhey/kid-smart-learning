@@ -90,6 +90,51 @@
         { "word": "sweet", "emoji": "🍬" },
         { "word": "street", "emoji": "🛣️" }
       ]
+    },
+    {
+      "sound": "ug",
+      "words": [
+        { "word": "bug", "emoji": "🐛" },
+        { "word": "hug", "emoji": "🤗" },
+        { "word": "mug", "emoji": "☕" },
+        { "word": "rug", "emoji": "🧶" }
+      ]
+    },
+    {
+      "sound": "en",
+      "words": [
+        { "word": "pen", "emoji": "🖊️" },
+        { "word": "hen", "emoji": "🐔" },
+        { "word": "ten", "emoji": "🔟" },
+        { "word": "den", "emoji": "🏠" }
+      ]
+    },
+    {
+      "sound": "op",
+      "words": [
+        { "word": "hop", "emoji": "🦘" },
+        { "word": "stop", "emoji": "🛑" },
+        { "word": "top", "emoji": "🔝" },
+        { "word": "shop", "emoji": "🏪" }
+      ]
+    },
+    {
+      "sound": "ice",
+      "words": [
+        { "word": "mice", "emoji": "🐭" },
+        { "word": "rice", "emoji": "🍚" },
+        { "word": "nice", "emoji": "😊" },
+        { "word": "dice", "emoji": "🎲" }
+      ]
+    },
+    {
+      "sound": "ear",
+      "words": [
+        { "word": "bear", "emoji": "🐻" },
+        { "word": "pear", "emoji": "🍐" },
+        { "word": "wear", "emoji": "👕" },
+        { "word": "tear", "emoji": "😢" }
+      ]
     }
   ]
 }
