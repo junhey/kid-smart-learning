@@ -106,5 +106,12 @@
     { "word": "glasses", "emoji": "👓" },
     { "word": "watch", "emoji": "⌚" },
     { "word": "fork", "emoji": "🍴" }
+  ],
+  "weather": [
+    { "word": "sunny", "emoji": "☀️" },
+    { "word": "rainy", "emoji": "🌧️" },
+    { "word": "cloudy", "emoji": "☁️" },
+    { "word": "windy", "emoji": "💨" },
+    { "word": "snowy", "emoji": "❄️" }
   ]
 }
