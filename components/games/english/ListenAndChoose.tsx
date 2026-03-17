@@ -8,6 +8,7 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import Toast from "@/components/ui/Toast";
 import wordsData from "@/data/english/words.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
 
@@ -77,6 +78,8 @@ export default function ListenAndChoose() {
   const [gameOver, setGameOver] = useState(false);
   const [hasSpoken, setHasSpoken] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastType, setToastType] = useState<"success" | "wrong">("success");
 
   const { addStar, resetStreak } = useReward();
   const { speakWord, playCorrectSound, playWrongSound } = useSound();
@@ -115,12 +118,15 @@ export default function ListenAndChoose() {
       if (opt.word === question?.target.word) {
         setShowReward(true);
         setShowCelebration(true);
+        setToastMessage("Perfect! You got it! 🎯");
+        setToastType("success");
         playCorrectSound();
         addStar(1);
         recordCorrect();
         setTimeout(() => {
           setShowReward(false);
           setShowCelebration(false);
+          setToastMessage("");
           if (total + 1 >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -128,10 +134,15 @@ export default function ListenAndChoose() {
           }
         }, 1500);
       } else {
+        setToastMessage("Not quite! Try again! 💪");
+        setToastType("wrong");
         playWrongSound();
         resetStreak();
         recordWrong();
-        setTimeout(() => nextQuestion(), 1200);
+        setTimeout(() => {
+          setToastMessage("");
+          nextQuestion();
+        }, 1200);
       }
     },
     [selected, hasSpoken, question, playCorrectSound, playWrongSound, addStar, resetStreak, recordCorrect, recordWrong, nextQuestion, total]
@@ -162,6 +173,7 @@ export default function ListenAndChoose() {
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
       {showCelebration && <CelebrationAnimation />}
+      <Toast message={toastMessage} type={toastType} show={toastMessage !== ""} />
       <ProgressBar current={total} total={TOTAL_ROUNDS} color="from-purple-400 to-pink-400" />
 
       {question && (
