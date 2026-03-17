@@ -8,6 +8,8 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import AnimatedButton from "@/components/ui/AnimatedButton";
+import Toast from "@/components/ui/Toast";
 import alphabetData from "@/data/english/alphabet.json";
 import wordsData from "@/data/english/words.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
@@ -116,6 +118,8 @@ export default function PhonicsGame() {
   const [showReward, setShowReward] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "wrong">("success");
 
   const { addStar, resetStreak } = useReward();
   const { speakLetter, speakWord, playCorrectSound, playWrongSound } = useSound();
@@ -141,12 +145,15 @@ export default function PhonicsGame() {
       if (opt.word === question?.correct.word) {
         setShowReward(true);
         setShowCelebration(true);
+        setToastMessage("Perfect match! 🎯");
+        setToastType("success");
         playCorrectSound();
         addStar(1);
         recordCorrect();
         setTimeout(() => {
           setShowReward(false);
           setShowCelebration(false);
+          setToastMessage("");
           if (total + 1 >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -154,10 +161,15 @@ export default function PhonicsGame() {
           }
         }, 1800);
       } else {
+        setToastMessage("Not quite! Try again! 💪");
+        setToastType("wrong");
         playWrongSound();
         resetStreak();
         recordWrong();
-        setTimeout(() => nextQuestion(), 1500);
+        setTimeout(() => {
+          setToastMessage("");
+          nextQuestion();
+        }, 1500);
       }
     },
     [selected, question, addStar, resetStreak, recordCorrect, recordWrong, speakWord, nextQuestion, total, playCorrectSound, playWrongSound]
@@ -171,6 +183,7 @@ export default function PhonicsGame() {
         onRestart={() => {
           reset();
           setGameOver(false);
+          setToastMessage("");
           nextQuestion();
         }}
         onBack={() => window.history.back()}
@@ -213,6 +226,13 @@ export default function PhonicsGame() {
               </motion.button>
             </div>
           </div>
+
+          <Toast
+            message={toastMessage}
+            type={toastType}
+            show={toastMessage !== ""}
+            onClose={() => setToastMessage("")}
+          />
 
           <div className="grid grid-cols-2 gap-4">
             {question.options.map((opt) => {
