@@ -18,12 +18,20 @@ const SPELL_WORDS = [
   { word: 'duck', emoji: '🦆', hint: 'animal' },
   { word: 'cow', emoji: '🐮', hint: 'animal' },
   { word: 'pig', emoji: '🐷', hint: 'animal' },
+  { word: 'bee', emoji: '🐝', hint: 'animal' },
+  { word: 'fox', emoji: '🦊', hint: 'animal' },
   { word: 'red', emoji: '🔴', hint: 'color' },
   { word: 'blue', emoji: '🔵', hint: 'color' },
   { word: 'sun', emoji: '☀️', hint: 'nature' },
   { word: 'moon', emoji: '🌙', hint: 'nature' },
   { word: 'tree', emoji: '🌳', hint: 'nature' },
   { word: 'star', emoji: '⭐', hint: 'nature' },
+  { word: 'ball', emoji: '⚽', hint: 'toy' },
+  { word: 'car', emoji: '🚗', hint: 'vehicle' },
+  { word: 'boat', emoji: '⛵', hint: 'vehicle' },
+  { word: 'cup', emoji: '☕', hint: 'daily' },
+  { word: 'book', emoji: '📖', hint: 'daily' },
+  { word: 'pen', emoji: '🖊️', hint: 'daily' },
 ];
 
 const WordSpell: React.FC = () => {
