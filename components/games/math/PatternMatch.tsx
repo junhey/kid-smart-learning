@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSound } from '@/hooks/useSound';
+import { useToast } from '@/components/ui/Toast';
 
 interface Pattern {
   sequence: string[];
@@ -68,6 +69,7 @@ export const PatternMatch: React.FC<{ onComplete?: () => void }> = ({ onComplete
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const { playCorrectSound, playWrongSound } = useSound();
+  const { showCorrect, showWrong, ToastComponent } = useToast();
 
   useEffect(() => {
     loadNewPattern();
@@ -90,11 +92,13 @@ export const PatternMatch: React.FC<{ onComplete?: () => void }> = ({ onComplete
     if (correct) {
       playCorrectSound();
       setScore(score + 1);
+      showCorrect('Perfect! You found the pattern! 🎉');
       setTimeout(() => {
         loadNewPattern();
       }, 1500);
     } else {
       playWrongSound();
+      showWrong('Try again! Look at the pattern closely! 🔍');
       setTimeout(() => {
         setSelectedAnswer(null);
         setIsCorrect(null);
@@ -110,6 +114,7 @@ export const PatternMatch: React.FC<{ onComplete?: () => void }> = ({ onComplete
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 to-pink-400 p-8 flex flex-col">
+      <ToastComponent />
       {/* Header */}
       <motion.div
         initial={{ y: -50, opacity: 0 }}
