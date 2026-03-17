@@ -8,6 +8,7 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import { useToast } from "@/components/ui/Toast";
 import sentencesData from "@/data/english/sentences.json";
 import { shuffleArray } from "@/lib/gameUtils";
 
@@ -33,6 +34,7 @@ export default function SentenceBuilder() {
   const { addStar, resetStreak } = useReward();
   const { speakSentence } = useSound();
   const { correct, total, recordCorrect, recordWrong, reset } = useProgress(TOTAL_ROUNDS);
+  const { showCorrect, showWrong, ToastComponent } = useToast();
 
   const nextSentence = useCallback(() => {
     const available = (sentencesData as SentenceData[]).filter(
@@ -82,6 +84,7 @@ export default function SentenceBuilder() {
       setFeedback("correct");
       setShowReward(true);
       setShowFullScreenCelebration(true);
+      showCorrect("Perfect sentence! 🎉");
       addStar(1);
       recordCorrect();
       speakSentence(sentence.answer);
@@ -96,6 +99,7 @@ export default function SentenceBuilder() {
       }, 2000);
     } else {
       setFeedback("wrong");
+      showWrong("Not quite! Try again! 💪");
       resetStreak();
       recordWrong();
       setTimeout(() => {
@@ -104,7 +108,7 @@ export default function SentenceBuilder() {
         setShuffled(shuffleArray([...(sentence?.words || [])]));
       }, 1000);
     }
-  }, [sentence, placed, addStar, resetStreak, recordCorrect, recordWrong, speakSentence, nextSentence, total]);
+  }, [sentence, placed, addStar, resetStreak, recordCorrect, recordWrong, speakSentence, nextSentence, total, showCorrect, showWrong]);
 
   if (gameOver) {
     return (
@@ -124,6 +128,7 @@ export default function SentenceBuilder() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      <ToastComponent />
       <StarReward show={showReward} />
       
       {/* Full-screen Duolingo-style celebration */}
@@ -291,32 +296,6 @@ export default function SentenceBuilder() {
               Check! ✅
             </motion.button>
           </div>
-
-          {feedback === "wrong" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center mt-3"
-            >
-              <motion.p
-                className="text-red-500 font-bold text-lg"
-                animate={{
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{ duration: 0.3, repeat: 2 }}
-              >
-                Not quite! Try again! 💪
-              </motion.p>
-              <motion.p
-                className="text-red-400 text-sm mt-1"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                Click words to rearrange them!
-              </motion.p>
-            </motion.div>
-          )}
         </motion.div>
       )}
     </div>
