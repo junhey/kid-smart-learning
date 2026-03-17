@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import AnimatedButton from '@/components/ui/AnimatedButton';
+import Toast from '@/components/ui/Toast';
 
 interface MemoryMatchData {
   pairs: string[];
@@ -24,6 +26,8 @@ const MemoryMatch: React.FC = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'correct' | 'wrong' | 'info'>('success');
 
   const levels: MemoryMatchData[] = [
     { pairs: ['🍎', '🍌', '🍊'], gridSize: 6, difficulty: 'easy' },
@@ -82,6 +86,10 @@ const MemoryMatch: React.FC = () => {
           updatedCards[secondIdx].isMatched = true;
           setMatchedPairs(matchedPairs + 1);
           
+          // Show success toast
+          setToastMessage('Perfect match! 🎯');
+          setToastType('success');
+          
           if (matchedPairs + 1 === currentData.pairs.length) {
             setShowCelebration(true);
             setTimeout(() => {
@@ -95,6 +103,10 @@ const MemoryMatch: React.FC = () => {
         } else {
           updatedCards[firstIdx].isFlipped = false;
           updatedCards[secondIdx].isFlipped = false;
+          
+          // Show error toast
+          setToastMessage('Not a match! Try again! 💪');
+          setToastType('wrong');
         }
         
         setCards(updatedCards);
@@ -186,14 +198,22 @@ const MemoryMatch: React.FC = () => {
         )}
 
         {/* Reset Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <AnimatedButton
           onClick={initializeCards}
-          className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-3xl font-bold text-lg shadow-lg hover:shadow-xl transition-shadow"
+          variant="primary"
+          size="lg"
+          className="w-full"
         >
           🔄 重新开始
-        </motion.button>
+        </AnimatedButton>
+
+        {/* Toast Feedback */}
+        <Toast 
+          show={toastMessage !== ''}
+          message={toastMessage} 
+          type={toastType}
+          onClose={() => setToastMessage('')}
+        />
       </div>
     </div>
   );
