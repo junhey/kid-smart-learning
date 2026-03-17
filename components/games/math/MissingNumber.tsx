@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import Toast from '@/components/ui/Toast';
 import './MissingNumber.css';
 
 interface MissingNumberProps {
@@ -21,6 +22,9 @@ const MissingNumber: React.FC<MissingNumberProps> = ({ onComplete }) => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [feedbackState, setFeedbackState] = useState<'correct' | 'wrong' | null>(null);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'correct' | 'wrong'>('correct');
+  const [showToast, setShowToast] = useState(false);
 
   const totalRounds = 5;
 
@@ -119,6 +123,11 @@ const MissingNumber: React.FC<MissingNumberProps> = ({ onComplete }) => {
       setFeedbackState('correct');
       setScore(score + 1);
 
+      // Toast 反馈
+      setToastMessage(`Perfect! The missing number is ${question.answer}! 🎯`);
+      setToastType('correct');
+      setShowToast(true);
+
       // 音效
       const correctSound = new Audio('/sounds/correct.mp3');
       correctSound.play().catch(() => {});
@@ -141,6 +150,12 @@ const MissingNumber: React.FC<MissingNumberProps> = ({ onComplete }) => {
       }, 1200);
     } else {
       setFeedbackState('wrong');
+
+      // Toast 反馈
+      setToastMessage('Try again! Look at the pattern! 🔍');
+      setToastType('wrong');
+      setShowToast(true);
+
       const wrongSound = new Audio('/sounds/wrong.mp3');
       wrongSound.play().catch(() => {});
 
@@ -156,6 +171,13 @@ const MissingNumber: React.FC<MissingNumberProps> = ({ onComplete }) => {
 
   return (
     <div className="missing-number-container">
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+      />
+
       <div className="missing-number-header">
         <h2>找出缺失的数字 🔢</h2>
         <div className="score-display">
