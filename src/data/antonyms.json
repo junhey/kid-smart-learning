@@ -46,5 +46,10 @@
   { "word": "noisy", "antonym": "silent" },
   { "word": "hungry", "antonym": "full" },
   { "word": "busy", "antonym": "idle" },
-  { "word": "cheap", "antonym": "expensive" }
+  { "word": "cheap", "antonym": "expensive" },
+  { "word": "fast", "antonym": "slow" },
+  { "word": "true", "antonym": "false" },
+  { "word": "above", "antonym": "below" },
+  { "word": "many", "antonym": "few" },
+  { "word": "first", "antonym": "last" }
 ]
