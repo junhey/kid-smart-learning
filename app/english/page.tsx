@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AlphabetBalloon from "@/components/games/english/AlphabetBalloon";
 import AlphabetMatch from "@/components/games/english/AlphabetMatch";
 import WordMatch from "@/components/games/english/WordMatch";
@@ -80,10 +81,18 @@ const games = [
     description: "找出押韵的单词！",
     component: RhymeGame,
   },
+  {
+    id: "wordspell",
+    title: "拼写练习",
+    emoji: "✏️",
+    description: "根据图片拼写单词！",
+    route: "/english/word-spell",
+  },
 ];
 
 export default function EnglishPage() {
   const [activeGame, setActiveGame] = useState<string | null>(null);
+  const router = useRouter();
 
   const ActiveGameComponent = activeGame
     ? games.find((g) => g.id === activeGame)?.component
@@ -139,7 +148,13 @@ export default function EnglishPage() {
                   variant={variant === 'primary' ? 'primary' : variant === 'info' ? 'primary' : 'success'}
                   size="lg"
                   fullWidth
-                  onClick={() => setActiveGame(game.id)}
+                  onClick={() => {
+                    if ('route' in game && game.route) {
+                      router.push(game.route);
+                    } else {
+                      setActiveGame(game.id);
+                    }
+                  }}
                 >
                   开始游戏 🎮
                 </Button>
