@@ -256,5 +256,47 @@
     "words": ["I", "am", "five", "years", "old"],
     "answer": "I am five years old",
     "emoji": "5️⃣"
+  },
+  {
+    "id": 44,
+    "words": ["I", "need", "water"],
+    "answer": "I need water",
+    "emoji": "💧"
+  },
+  {
+    "id": 45,
+    "words": ["The", "snow", "is", "white"],
+    "answer": "The snow is white",
+    "emoji": "❄️"
+  },
+  {
+    "id": 46,
+    "words": ["Can", "I", "play", "outside"],
+    "answer": "Can I play outside",
+    "emoji": "🌳"
+  },
+  {
+    "id": 47,
+    "words": ["I", "wear", "a", "hat"],
+    "answer": "I wear a hat",
+    "emoji": "🎩"
+  },
+  {
+    "id": 48,
+    "words": ["The", "bus", "is", "yellow"],
+    "answer": "The bus is yellow",
+    "emoji": "🚌"
+  },
+  {
+    "id": 49,
+    "words": ["I", "feel", "sleepy"],
+    "answer": "I feel sleepy",
+    "emoji": "😪"
+  },
+  {
+    "id": 50,
+    "words": ["Grandma", "makes", "cookies"],
+    "answer": "Grandma makes cookies",
+    "emoji": "🍪"
   }
 ]
