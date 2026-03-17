@@ -8,6 +8,7 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import Toast from "@/components/ui/Toast";
 import wordsData from "@/data/english/words.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
 
@@ -87,6 +88,9 @@ export default function WordMatch() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [wrongAnswerAnimation, setWrongAnswerAnimation] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "correct" | "wrong">("success");
   const roundRef = useRef(0);
 
   const { addStar } = useReward();
@@ -113,6 +117,9 @@ export default function WordMatch() {
         playCorrectSound();
         setShowReward(true);
         setShowCelebration(true);
+        setToastMessage("Perfect! 🎉");
+        setToastType("correct");
+        setShowToast(true);
         addStar(1);
         recordCorrect();
         speak(`${word.word}! Correct!`, { rate: 0.9 });
@@ -124,6 +131,7 @@ export default function WordMatch() {
           setTimeout(() => {
             setShowReward(false);
             setShowCelebration(false);
+            setShowToast(false);
             nextQuestion();
           }, 1500);
         }
@@ -131,9 +139,13 @@ export default function WordMatch() {
         playWrongSound();
         recordWrong();
         setWrongAnswerAnimation(true);
+        setToastMessage("Try again!");
+        setToastType("wrong");
+        setShowToast(true);
         setTimeout(() => {
           setWrongAnswerAnimation(false);
           setSelected(null);
+          setShowToast(false);
           nextQuestion();
         }, 1200);
       }
@@ -160,6 +172,7 @@ export default function WordMatch() {
   return (
     <div className="max-w-2xl mx-auto">
       <StarReward show={showReward} />
+      <Toast show={showToast} message={toastMessage} type={toastType} />
       
       {showCelebration && <CelebrationAnimation />}
 
