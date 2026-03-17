@@ -8,6 +8,7 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import Toast from "@/components/ui/Toast";
 import rhymesData from "@/data/english/rhymes.json";
 import { shuffleArray, pickRandom, pickRandomOne } from "@/lib/gameUtils";
 
@@ -72,6 +73,7 @@ export default function RhymeGame() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showStar, setShowStar] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'correct' | 'wrong' | 'info' } | null>(null);
   const { addStar } = useReward();
   const { playCorrectSound, playWrongSound } = useSound();
   const { correct, total, recordCorrect, percent, isComplete } = useProgress(5);
@@ -118,10 +120,12 @@ export default function RhymeGame() {
       addStar();
       setShowStar(true);
       setShowCelebration(true);
+      setToast({ show: true, message: "Perfect! 🎉", type: "success" });
       
       setTimeout(() => {
         setShowStar(false);
         setShowCelebration(false);
+        setToast(null);
       }, 1200);
       
       recordCorrect();
@@ -130,9 +134,11 @@ export default function RhymeGame() {
       }, 1500);
     } else {
       playWrongSound();
+      setToast({ show: true, message: "Try again!", type: "wrong" });
       setTimeout(() => {
         setSelected(null);
         setIsCorrect(null);
+        setToast(null);
       }, 1000);
     }
   };
@@ -226,6 +232,7 @@ export default function RhymeGame() {
 
         {showStar && <StarReward show={showStar} />}
         {showCelebration && <CelebrationAnimation />}
+        {toast && <Toast show={toast.show} message={toast.message} type={toast.type} />}
 
         {isComplete && (
           <GameResult
