@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import Toast from "@/components/ui/Toast";
 
 function CelebrationAnimation() {
   return (
@@ -73,6 +74,7 @@ export default function ShapeCount() {
   const [celebrateAnimation, setCelebrateAnimation] = useState(false);
   const [wrongAnswerAnimation, setWrongAnswerAnimation] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: "correct" | "wrong" } | null>(null);
   const roundRef = useRef(0);
 
   const { addStar } = useReward();
@@ -137,13 +139,18 @@ export default function ShapeCount() {
       recordCorrect();
       addStar(1);
       setCelebrateAnimation(true);
+      setToast({ message: `Perfect! You counted ${targetCount} ${shapeNames[targetShape].toLowerCase()}s! 🎉`, type: "correct" });
       roundRef.current += 1;
       
       if (roundRef.current >= TOTAL_ROUNDS) {
-        setTimeout(() => setGameOver(true), 2000);
+        setTimeout(() => {
+          setToast(null);
+          setGameOver(true);
+        }, 2000);
       } else {
         setTimeout(() => {
           setCelebrateAnimation(false);
+          setToast(null);
           generateRound();
         }, 1500);
       }
@@ -151,8 +158,10 @@ export default function ShapeCount() {
       playWrongSound();
       recordWrong();
       setWrongAnswerAnimation(true);
+      setToast({ message: `Try again! Count the ${shapeNames[targetShape].toLowerCase()}s carefully! 🔍`, type: "wrong" });
       setTimeout(() => {
         setWrongAnswerAnimation(false);
+        setToast(null);
         setSelectedAnswer(null);
       }, 800);
     }
@@ -178,6 +187,8 @@ export default function ShapeCount() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
+      <Toast message={toast?.message || ""} type={toast?.type || "correct"} show={!!toast} />
+      
       <div className="w-full max-w-2xl">
         <ProgressBar current={roundRef.current + 1} total={TOTAL_ROUNDS} />
       </div>
