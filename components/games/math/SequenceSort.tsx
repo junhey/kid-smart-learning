@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playCorrect, playWrong } from '@/lib/sounds';
+import Toast from '@/components/ui/Toast';
 
 interface SequenceItem {
   id: string;
@@ -40,6 +41,8 @@ export function SequenceSort({ onComplete }: { onComplete: () => void }) {
   const [attempts, setAttempts] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastType, setToastType] = useState<"success" | "correct" | "wrong" | "info">("success");
 
   useEffect(() => {
     loadNewSequence();
@@ -86,10 +89,13 @@ export function SequenceSort({ onComplete }: { onComplete: () => void }) {
       setScore(prev => prev + 1);
       setFeedback('correct');
       setShowCelebration(true);
+      setToastMessage("Perfect! The sequence is correct! 🎯");
+      setToastType("success");
       playCorrect();
 
       setTimeout(() => {
         setShowCelebration(false);
+        setToastMessage("");
         if (attempts + 1 >= 5) {
           onComplete();
         } else {
@@ -98,8 +104,13 @@ export function SequenceSort({ onComplete }: { onComplete: () => void }) {
       }, 2000);
     } else {
       setFeedback('wrong');
+      setToastMessage("Try again! Check the order! 🔍");
+      setToastType("wrong");
       playWrong();
-      setTimeout(() => setFeedback(null), 600);
+      setTimeout(() => {
+        setFeedback(null);
+        setToastMessage("");
+      }, 1200);
     }
   };
 
@@ -107,6 +118,7 @@ export function SequenceSort({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-purple-500 p-4">
+      <Toast message={toastMessage} type={toastType} show={!!toastMessage} onClose={() => setToastMessage("")} />
       <div className="text-white text-2xl font-bold mb-4">🔢 序列排序</div>
       
       <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 mb-6">
