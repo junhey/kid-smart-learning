@@ -19,7 +19,10 @@
     { "word": "zebra", "emoji": "🦓" },
     { "word": "panda", "emoji": "🐼" },
     { "word": "penguin", "emoji": "🐧" },
-    { "word": "snake", "emoji": "🐍" }
+    { "word": "snake", "emoji": "🐍" },
+    { "word": "giraffe", "emoji": "🦒" },
+    { "word": "owl", "emoji": "🦉" },
+    { "word": "bee", "emoji": "🐝" }
   ],
   "fruits": [
     { "word": "apple", "emoji": "🍎" },
@@ -39,7 +42,9 @@
     { "word": "blueberry", "emoji": "🫐" },
     { "word": "melon", "emoji": "🍈" },
     { "word": "avocado", "emoji": "🥑" },
-    { "word": "tomato", "emoji": "🍅" }
+    { "word": "tomato", "emoji": "🍅" },
+    { "word": "plum", "emoji": "🫘" },
+    { "word": "papaya", "emoji": "🫛" }
   ],
   "colors": [
     { "word": "red", "emoji": "🔴" },
@@ -51,7 +56,9 @@
     { "word": "pink", "emoji": "🩷" },
     { "word": "black", "emoji": "⚫" },
     { "word": "white", "emoji": "⚪" },
-    { "word": "brown", "emoji": "🟤" }
+    { "word": "brown", "emoji": "🟤" },
+    { "word": "gray", "emoji": "🩶" },
+    { "word": "gold", "emoji": "🟨" }
   ],
   "family": [
     { "word": "mom", "emoji": "👩" },
@@ -93,6 +100,11 @@
     { "word": "bag", "emoji": "🎒" },
     { "word": "bottle", "emoji": "🧴" },
     { "word": "toothbrush", "emoji": "🪥" },
-    { "word": "lamp", "emoji": "🪔" }
+    { "word": "lamp", "emoji": "🪔" },
+    { "word": "shoes", "emoji": "👟" },
+    { "word": "hat", "emoji": "🎩" },
+    { "word": "glasses", "emoji": "👓" },
+    { "word": "watch", "emoji": "⌚" },
+    { "word": "fork", "emoji": "🍴" }
   ]
 }
