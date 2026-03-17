@@ -8,6 +8,7 @@ import { useProgress } from "@/hooks/useProgress";
 import StarReward from "@/components/ui/StarReward";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import Toast from "@/components/ui/Toast";
 import alphabetData from "@/data/english/alphabet.json";
 import { shuffleArray, pickRandom } from "@/lib/gameUtils";
 
@@ -46,6 +47,8 @@ export default function AlphabetBalloon() {
   const [showReward, setShowReward] = useState(false);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [gameOver, setGameOver] = useState(false);
+  const [toastType, setToastType] = useState<"correct" | "wrong" | null>(null);
+  const [showToast, setShowToast] = useState(false);
   const roundRef = useRef(0);
 
   const { addStar } = useReward();
@@ -96,12 +99,15 @@ export default function AlphabetBalloon() {
         playCorrectSound();
         setFeedback("correct");
         setShowReward(true);
+        setToastType("correct");
+        setShowToast(true);
         addStar(1);
         recordCorrect();
         speak(`Great job! ${target?.letter} for ${target?.word}!`, { rate: 0.9 });
         roundRef.current += 1;
         setTimeout(() => {
           setShowReward(false);
+          setShowToast(false);
           if (roundRef.current >= TOTAL_ROUNDS) {
             setGameOver(true);
           } else {
@@ -111,6 +117,8 @@ export default function AlphabetBalloon() {
       } else {
         playWrongSound();
         setFeedback("wrong");
+        setToastType("wrong");
+        setShowToast(true);
         speak("Try again!", { rate: 0.9 });
         recordWrong();
         setTimeout(() => {
@@ -120,6 +128,7 @@ export default function AlphabetBalloon() {
             )
           );
           setFeedback(null);
+          setShowToast(false);
         }, 800);
       }
     },
@@ -148,6 +157,11 @@ export default function AlphabetBalloon() {
   return (
     <div className="max-w-3xl mx-auto">
       <StarReward show={showReward} />
+      <Toast
+        type={toastType || "correct"}
+        message={toastType === "correct" ? "Perfect! 🎉" : "Try again!"}
+        show={showToast}
+      />
 
       <ProgressBar current={total} total={TOTAL_ROUNDS} />
 
