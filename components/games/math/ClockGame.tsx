@@ -7,6 +7,7 @@ import { useSound } from "@/hooks/useSound";
 import { useProgress } from "@/hooks/useProgress";
 import ProgressBar from "@/components/ui/ProgressBar";
 import GameResult from "@/components/ui/GameResult";
+import Toast from "@/components/ui/Toast";
 import { shuffleArray, randomInt } from "@/lib/gameUtils";
 
 const TOTAL_ROUNDS = 10;
@@ -93,6 +94,9 @@ export default function ClockGame() {
   const [shake, setShake] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"correct" | "wrong">("correct");
   const questionRef = useRef(question);
   
   const { addStar } = useReward();
@@ -126,6 +130,9 @@ export default function ClockGame() {
         playCorrectSound();
         addStar(1);
         setCorrectCount(c => c + 1);
+        setToastMessage(`Perfect! It's ${questionRef.current.answer}! 🎯`);
+        setToastType("correct");
+        setShowToast(true);
         if (correctCount + 1 > 0 && (correctCount + 1) % 3 === 0) {
           setShowCelebration(true);
         }
@@ -134,9 +141,15 @@ export default function ClockGame() {
         playWrongSound();
         setShake(true);
         setCorrectCount(0);
+        setToastMessage("Try again! Look at the clock hands! ⏰");
+        setToastType("wrong");
+        setShowToast(true);
         setTimeout(() => setShake(false), 500);
       }
-      setTimeout(nextQuestion, 1500);
+      setTimeout(() => {
+        setShowToast(false);
+        nextQuestion();
+      }, 1500);
     },
     [status, isComplete, recordCorrect, recordWrong, playCorrectSound, playWrongSound, addStar, nextQuestion, correctCount]
   );
@@ -153,6 +166,13 @@ export default function ClockGame() {
     <div className="flex flex-col items-center gap-6 max-w-2xl mx-auto p-4">
       <h1 className="text-3xl font-bold text-center">⏰ 时钟游戏</h1>
       <ProgressBar current={correct} total={TOTAL_ROUNDS} />
+
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+      />
 
       {showCelebration && <CelebrationAnimation />}
 
