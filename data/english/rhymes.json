@@ -135,6 +135,51 @@
         { "word": "wear", "emoji": "👕" },
         { "word": "tear", "emoji": "😢" }
       ]
+    },
+    {
+      "sound": "ill",
+      "words": [
+        { "word": "hill", "emoji": "⛰️" },
+        { "word": "pill", "emoji": "💊" },
+        { "word": "spill", "emoji": "💧" },
+        { "word": "grill", "emoji": "🍖" }
+      ]
+    },
+    {
+      "sound": "ot",
+      "words": [
+        { "word": "pot", "emoji": "🍲" },
+        { "word": "hot", "emoji": "🔥" },
+        { "word": "dot", "emoji": "⚫" },
+        { "word": "spot", "emoji": "🐾" }
+      ]
+    },
+    {
+      "sound": "ide",
+      "words": [
+        { "word": "ride", "emoji": "🚴" },
+        { "word": "hide", "emoji": "🙈" },
+        { "word": "slide", "emoji": "🛝" },
+        { "word": "wide", "emoji": "↔️" }
+      ]
+    },
+    {
+      "sound": "ine",
+      "words": [
+        { "word": "pine", "emoji": "🌲" },
+        { "word": "nine", "emoji": "9️⃣" },
+        { "word": "line", "emoji": "📏" },
+        { "word": "vine", "emoji": "🍇" }
+      ]
+    },
+    {
+      "sound": "ock",
+      "words": [
+        { "word": "rock", "emoji": "🪨" },
+        { "word": "clock", "emoji": "🕐" },
+        { "word": "sock", "emoji": "🧦" },
+        { "word": "lock", "emoji": "🔒" }
+      ]
     }
   ]
 }
