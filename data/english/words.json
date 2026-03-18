@@ -22,7 +22,9 @@
     { "word": "snake", "emoji": "🐍" },
     { "word": "giraffe", "emoji": "🦒" },
     { "word": "owl", "emoji": "🦉" },
-    { "word": "bee", "emoji": "🐝" }
+    { "word": "bee", "emoji": "🐝" },
+    { "word": "turtle", "emoji": "🐢" },
+    { "word": "butterfly", "emoji": "🦋" }
   ],
   "fruits": [
     { "word": "apple", "emoji": "🍎" },
@@ -76,6 +78,8 @@
     { "word": "book", "emoji": "📚" },
     { "word": "ball", "emoji": "⚽" },
     { "word": "car", "emoji": "🚗" },
+    { "word": "bus", "emoji": "🚌" },
+    { "word": "plane", "emoji": "✈️" },
     { "word": "house", "emoji": "🏠" },
     { "word": "tree", "emoji": "🌳" },
     { "word": "sun", "emoji": "☀️" },
@@ -105,7 +109,9 @@
     { "word": "hat", "emoji": "🎩" },
     { "word": "glasses", "emoji": "👓" },
     { "word": "watch", "emoji": "⌚" },
-    { "word": "fork", "emoji": "🍴" }
+    { "word": "fork", "emoji": "🍴" },
+    { "word": "mirror", "emoji": "🪞" },
+    { "word": "towel", "emoji": "🧻" }
   ],
   "weather": [
     { "word": "sunny", "emoji": "☀️" },
