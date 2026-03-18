@@ -126,5 +126,45 @@
     "description": "Points in a direction",
     "color": "#60A5FA",
     "svgPath": "arrow"
+  },
+  {
+    "name": "trapezoid",
+    "emoji": "🔶",
+    "sides": 4,
+    "description": "4 sides, 2 sides parallel",
+    "color": "#FB923C",
+    "svgPath": "trapezoid"
+  },
+  {
+    "name": "rhombus",
+    "emoji": "🔸",
+    "sides": 4,
+    "description": "4 equal sides tilted like a diamond",
+    "color": "#F472B6",
+    "svgPath": "rhombus"
+  },
+  {
+    "name": "cross",
+    "emoji": "➕",
+    "sides": 12,
+    "description": "Plus sign shape with 4 arms",
+    "color": "#22D3EE",
+    "svgPath": "cross"
+  },
+  {
+    "name": "flower",
+    "emoji": "🌸",
+    "sides": 0,
+    "description": "Pretty flower with petals",
+    "color": "#F9A8D4",
+    "svgPath": "flower"
+  },
+  {
+    "name": "sun",
+    "emoji": "☀️",
+    "sides": 0,
+    "description": "Bright sun with rays",
+    "color": "#FDE047",
+    "svgPath": "sun"
   }
 ]
