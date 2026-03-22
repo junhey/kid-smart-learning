@@ -1,10 +1,12 @@
 /**
  * GameCard Component - Duolingo Style Card
  * 使用统一的设计tokens系统
- * Enhanced with keyboard navigation and accessibility
+ * Enhanced with keyboard navigation, accessibility, and ripple effects
  */
 
-import { KeyboardEvent } from 'react';
+"use client";
+
+import { KeyboardEvent, useState, useRef, useEffect } from 'react';
 
 interface GameCardProps {
   title: string;
@@ -18,6 +20,13 @@ interface GameCardProps {
   ariaLabel?: string;
 }
 
+interface Ripple {
+  x: number;
+  y: number;
+  size: number;
+  id: number;
+}
+
 export function GameCard({
   title,
   description,
@@ -28,10 +37,66 @@ export function GameCard({
   variant = 'default',
   ariaLabel,
 }: GameCardProps) {
+  const [ripples, setRipples] = useState<Ripple[]>([]);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Remove ripple after animation completes
+  useEffect(() => {
+    if (ripples.length > 0) {
+      const timer = setTimeout(() => {
+        setRipples((prev) => prev.slice(1));
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [ripples]);
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!onClick) return;
+
+    // Create ripple effect
+    const card = cardRef.current;
+    if (card) {
+      const rect = card.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      
+      const newRipple: Ripple = {
+        x,
+        y,
+        size,
+        id: Date.now(),
+      };
+      
+      setRipples((prev) => [...prev, newRipple]);
+    }
+
+    onClick();
+  };
+
   // 键盘导航处理
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (onClick && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault();
+      
+      // Create ripple at center for keyboard activation
+      const card = cardRef.current;
+      if (card) {
+        const rect = card.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = rect.width / 2 - size / 2;
+        const y = rect.height / 2 - size / 2;
+        
+        const newRipple: Ripple = {
+          x,
+          y,
+          size,
+          id: Date.now(),
+        };
+        
+        setRipples((prev) => [...prev, newRipple]);
+      }
+      
       onClick();
     }
   };
@@ -59,7 +124,8 @@ export function GameCard({
 
   return (
     <div
-      onClick={onClick}
+      ref={cardRef}
+      onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={onClick ? 0 : undefined}
       role={onClick ? 'button' : 'article'}
@@ -78,6 +144,23 @@ export function GameCard({
         ${className}
       `}
     >
+      {/* Ripple effects */}
+      {ripples.map((ripple) => (
+        <span
+          key={ripple.id}
+          className="absolute rounded-full pointer-events-none z-20"
+          style={{
+            left: ripple.x,
+            top: ripple.y,
+            width: ripple.size,
+            height: ripple.size,
+            opacity: 0.3,
+            background: 'radial-gradient(circle, rgba(88, 204, 2, 0.6) 0%, rgba(88, 204, 2, 0) 70%)',
+            animation: 'ripple 600ms ease-out',
+          }}
+        />
+      ))}
+
       {/* 背景装饰元素 */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
         <div className="absolute -top-10 -left-10 w-40 h-40 rounded-full blur-xl bg-gradient-to-r from-[#58CC02]/20 to-[#1CB0F6]/20"></div>
@@ -110,6 +193,20 @@ export function GameCard({
 
       {/* 3D立体效果边框 */}
       <div className="absolute inset-0 border-2 border-white/50 rounded-3xl pointer-events-none"></div>
+
+      {/* Add ripple animation keyframes via style tag */}
+      <style jsx>{`
+        @keyframes ripple {
+          from {
+            transform: scale(0);
+            opacity: 0.3;
+          }
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }

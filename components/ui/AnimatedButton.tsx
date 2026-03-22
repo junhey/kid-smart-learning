@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, HTMLMotionProps } from "framer-motion";
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode, useState, useRef, useEffect } from "react";
 import { useSound } from "@/hooks/useSound";
 
 interface AnimatedButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
@@ -14,6 +14,13 @@ interface AnimatedButtonProps extends Omit<HTMLMotionProps<"button">, "children"
   ariaLabel?: string;
   /** Loading state for async operations */
   loading?: boolean;
+}
+
+interface Ripple {
+  x: number;
+  y: number;
+  size: number;
+  id: number;
 }
 
 const variants = {
@@ -43,9 +50,41 @@ export default function AnimatedButton({
   ...props
 }: AnimatedButtonProps) {
   const { playClickSound } = useSound();
+  const [ripples, setRipples] = useState<Ripple[]>([]);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Remove ripple after animation completes
+  useEffect(() => {
+    if (ripples.length > 0) {
+      const timer = setTimeout(() => {
+        setRipples((prev) => prev.slice(1));
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [ripples]);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (playSound && !loading) {
+    if (disabled || loading) return;
+
+    // Create ripple effect
+    const button = buttonRef.current;
+    if (button) {
+      const rect = button.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      
+      const newRipple: Ripple = {
+        x,
+        y,
+        size,
+        id: Date.now(),
+      };
+      
+      setRipples((prev) => [...prev, newRipple]);
+    }
+
+    if (playSound) {
       playClickSound();
     }
     onClick?.(e);
@@ -53,6 +92,7 @@ export default function AnimatedButton({
 
   return (
     <motion.button
+      ref={buttonRef}
       className={`
         ${variants[variant]}
         ${sizes[size]}
@@ -60,6 +100,7 @@ export default function AnimatedButton({
         disabled:opacity-50 disabled:cursor-not-allowed
         active:scale-95
         focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-300
+        relative overflow-hidden
         ${className}
       `}
       whileHover={!disabled && !loading ? { scale: 1.05, y: -2 } : {}}
@@ -78,17 +119,50 @@ export default function AnimatedButton({
       aria-disabled={disabled || loading}
       {...props}
     >
-      {loading ? (
-        <span className="inline-flex items-center gap-2">
-          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span>{children}</span>
-        </span>
-      ) : (
-        children
-      )}
+      {/* Ripple effects */}
+      {ripples.map((ripple) => (
+        <span
+          key={ripple.id}
+          className="absolute rounded-full bg-white pointer-events-none"
+          style={{
+            left: ripple.x,
+            top: ripple.y,
+            width: ripple.size,
+            height: ripple.size,
+            opacity: 0.4,
+            animation: 'ripple 600ms ease-out',
+          }}
+        />
+      ))}
+
+      {/* Button content */}
+      <span className="relative z-10">
+        {loading ? (
+          <span className="inline-flex items-center gap-2">
+            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{children}</span>
+          </span>
+        ) : (
+          children
+        )}
+      </span>
+
+      {/* Add ripple animation keyframes via style tag */}
+      <style jsx>{`
+        @keyframes ripple {
+          from {
+            transform: scale(0);
+            opacity: 0.4;
+          }
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </motion.button>
   );
 }
