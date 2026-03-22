@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import { colors, shadows, borderRadius, animations } from "@/lib/design-tokens";
 import { playPerfectResult, playGoodResult, playFairResult } from "@/lib/game-sounds";
@@ -13,6 +13,12 @@ interface GameResultProps {
   onBack: () => void;
 }
 
+interface Ripple {
+  x: number;
+  y: number;
+  id: number;
+}
+
 export default function GameResult({
   correct,
   total,
@@ -22,6 +28,39 @@ export default function GameResult({
   const accuracy = Math.round((correct / total) * 100);
   const isPerfect = correct === total;
   const isGood = accuracy >= 80;
+
+  // Ripple effect states for both buttons
+  const [restartRipples, setRestartRipples] = useState<Ripple[]>([]);
+  const [backRipples, setBackRipples] = useState<Ripple[]>([]);
+  const restartButtonRef = useRef<HTMLButtonElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
+  const rippleIdRef = useRef(0);
+
+  const createRipple = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    setRipples: React.Dispatch<React.SetStateAction<Ripple[]>>,
+    buttonRef: React.RefObject<HTMLButtonElement>
+  ) => {
+    const button = buttonRef.current;
+    if (!button) return;
+
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const ripple: Ripple = {
+      x,
+      y,
+      id: rippleIdRef.current++,
+    };
+
+    setRipples(prev => [...prev, ripple]);
+
+    // Remove ripple after animation
+    setTimeout(() => {
+      setRipples(prev => prev.filter(r => r.id !== ripple.id));
+    }, 600);
+  };
 
   useEffect(() => {
     // Launch confetti for good performance with Duolingo colors
@@ -216,8 +255,12 @@ export default function GameResult({
           transition={{ delay: 0.5 }}
         >
           <button
-            onClick={onRestart}
-            className="flex-1 relative font-bold py-4 px-6 text-lg transition-all duration-300 hover:-translate-y-1 active:translate-y-1"
+            ref={restartButtonRef}
+            onClick={(e) => {
+              createRipple(e, setRestartRipples, restartButtonRef);
+              onRestart();
+            }}
+            className="flex-1 relative font-bold py-4 px-6 text-lg transition-all duration-300 hover:-translate-y-1 active:translate-y-1 overflow-hidden"
             style={{
               backgroundColor: colors.primary.green,
               color: colors.text.white,
@@ -226,11 +269,30 @@ export default function GameResult({
               border: `2px solid ${colors.primary.greenDark}`,
             }}
           >
-            <span className="drop-shadow-md">🔄 再玩一次</span>
+            <span className="drop-shadow-md relative z-10">🔄 再玩一次</span>
+            {/* Ripple effects */}
+            {restartRipples.map(ripple => (
+              <span
+                key={ripple.id}
+                className="absolute rounded-full bg-white/40 pointer-events-none"
+                style={{
+                  left: ripple.x,
+                  top: ripple.y,
+                  width: '10px',
+                  height: '10px',
+                  transform: 'translate(-50%, -50%) scale(0)',
+                  animation: 'ripple 0.6s ease-out',
+                }}
+              />
+            ))}
           </button>
           <button
-            onClick={onBack}
-            className="flex-1 relative font-bold py-4 px-6 text-lg transition-all duration-300 hover:-translate-y-1 active:translate-y-1"
+            ref={backButtonRef}
+            onClick={(e) => {
+              createRipple(e, setBackRipples, backButtonRef);
+              onBack();
+            }}
+            className="flex-1 relative font-bold py-4 px-6 text-lg transition-all duration-300 hover:-translate-y-1 active:translate-y-1 overflow-hidden"
             style={{
               backgroundColor: colors.accent.blue,
               color: colors.text.white,
@@ -239,7 +301,22 @@ export default function GameResult({
               border: `2px solid ${colors.accent.blue.replace('#', '#1A')}`,
             }}
           >
-            <span className="drop-shadow-md">🏠 返回选择</span>
+            <span className="drop-shadow-md relative z-10">🏠 返回选择</span>
+            {/* Ripple effects */}
+            {backRipples.map(ripple => (
+              <span
+                key={ripple.id}
+                className="absolute rounded-full bg-white/40 pointer-events-none"
+                style={{
+                  left: ripple.x,
+                  top: ripple.y,
+                  width: '10px',
+                  height: '10px',
+                  transform: 'translate(-50%, -50%) scale(0)',
+                  animation: 'ripple 0.6s ease-out',
+                }}
+              />
+            ))}
           </button>
         </motion.div>
       </motion.div>

@@ -193,3 +193,14 @@ button {
   0%, 100% { box-shadow: 0 15px 30px -5px rgba(239, 68, 68, 0.4); }
   50% { box-shadow: 0 20px 40px -8px rgba(239, 68, 68, 0.6); }
 }
+
+@keyframes ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(40);
+    opacity: 0;
+  }
+}
