@@ -1,7 +1,10 @@
 /**
  * GameCard Component - Duolingo Style Card
  * 使用统一的设计tokens系统
+ * Enhanced with keyboard navigation and accessibility
  */
+
+import { KeyboardEvent } from 'react';
 
 interface GameCardProps {
   title: string;
@@ -11,6 +14,8 @@ interface GameCardProps {
   className?: string;
   children?: React.ReactNode;
   variant?: 'default' | 'primary' | 'success' | 'info';
+  /** Accessible label for screen readers */
+  ariaLabel?: string;
 }
 
 export function GameCard({
@@ -21,7 +26,15 @@ export function GameCard({
   className = '',
   children,
   variant = 'default',
+  ariaLabel,
 }: GameCardProps) {
+  // 键盘导航处理
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (onClick && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onClick();
+    }
+  };
   // 根据variant选择颜色
   const variantClasses = {
     default: 'bg-white border-gray-100 hover:shadow-[0_8px_24px_rgba(0,0,0,0.18)]',
@@ -47,6 +60,10 @@ export function GameCard({
   return (
     <div
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={onClick ? 0 : undefined}
+      role={onClick ? 'button' : 'article'}
+      aria-label={ariaLabel || `${title}${description ? `: ${description}` : ''}`}
       className={`
         ${variantClasses}
         rounded-3xl
@@ -57,7 +74,7 @@ export function GameCard({
         border-2
         relative
         overflow-hidden
-        ${onClick ? 'cursor-pointer' : ''}
+        ${onClick ? 'cursor-pointer focus:outline-none focus:ring-4 focus:ring-[#58CC02]/50 focus:ring-offset-2' : ''}
         ${className}
       `}
     >
@@ -70,7 +87,10 @@ export function GameCard({
       {/* 内容 */}
       <div className="relative z-10">
         {icon && (
-          <div className="text-6xl mb-4 text-center transform transition-transform hover:scale-110 hover:rotate-6 duration-300">
+          <div 
+            className="text-6xl mb-4 text-center transform transition-transform hover:scale-110 hover:rotate-6 duration-300"
+            aria-hidden="true"
+          >
             {icon}
           </div>
         )}
