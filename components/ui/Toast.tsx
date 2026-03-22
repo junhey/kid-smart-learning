@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 interface ToastProps {
   show: boolean;
@@ -10,6 +10,12 @@ interface ToastProps {
   emoji?: string;
   onClose?: () => void;
   duration?: number; // 自动关闭时间（毫秒），0 表示不自动关闭
+}
+
+interface Ripple {
+  x: number;
+  y: number;
+  id: number;
 }
 
 const TOAST_STYLES = {
@@ -49,6 +55,8 @@ export default function Toast({
 }: ToastProps) {
   const style = TOAST_STYLES[type];
   const displayEmoji = emoji || style.emoji;
+  const [ripples, setRipples] = useState<Ripple[]>([]);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (show && duration > 0 && onClose) {
@@ -56,6 +64,35 @@ export default function Toast({
       return () => clearTimeout(timer);
     }
   }, [show, duration, onClose]);
+
+  const createRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!closeButtonRef.current) return;
+
+    const button = closeButtonRef.current;
+    const rect = button.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const newRipple: Ripple = {
+      x,
+      y,
+      id: Date.now(),
+    };
+
+    setRipples((prev) => [...prev, newRipple]);
+
+    setTimeout(() => {
+      setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
+    }, 600);
+  };
+
+  const handleCloseClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    createRipple(e);
+    if (onClose) {
+      // 延迟关闭，让涟漪动画完成
+      setTimeout(onClose, 150);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -78,15 +115,44 @@ export default function Toast({
             flex items-center gap-3
             min-w-[280px] max-w-[90vw]
           `}
+          role="alert"
+          aria-live="polite"
         >
-          <span className="text-3xl">{displayEmoji}</span>
+          <span className="text-3xl" aria-hidden="true">{displayEmoji}</span>
           <span className="flex-1">{message}</span>
           {onClose && (
             <button
-              onClick={onClose}
-              className="text-white/80 hover:text-white transition-colors text-2xl leading-none ml-2"
+              ref={closeButtonRef}
+              onClick={handleCloseClick}
+              aria-label="关闭提示"
+              className="
+                relative overflow-hidden
+                w-10 h-10
+                flex items-center justify-center
+                rounded-full
+                text-white/80 hover:text-white 
+                hover:bg-white/20
+                active:bg-white/30
+                transition-all duration-200
+                text-2xl leading-none
+                focus:outline-none focus:ring-2 focus:ring-white/50
+                ml-2
+              "
             >
-              ×
+              <span className="relative z-10">×</span>
+              {ripples.map((ripple) => (
+                <span
+                  key={ripple.id}
+                  className="absolute rounded-full bg-white/40 animate-ripple"
+                  style={{
+                    left: ripple.x,
+                    top: ripple.y,
+                    width: 10,
+                    height: 10,
+                    transform: "translate(-50%, -50%)",
+                  }}
+                />
+              ))}
             </button>
           )}
         </motion.div>
@@ -96,8 +162,6 @@ export default function Toast({
 }
 
 // 便捷的 Hook 版本
-import { useState, useCallback } from "react";
-
 interface ToastOptions {
   duration?: number;
   emoji?: string;
