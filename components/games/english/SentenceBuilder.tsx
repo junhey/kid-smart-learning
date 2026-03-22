@@ -51,7 +51,7 @@ export default function SentenceBuilder() {
 
   useEffect(() => {
     nextSentence();
-  }, []);
+  }, [nextSentence]);
 
   const handleWordClick = useCallback(
     (word: string, from: "shuffled" | "placed") => {

@@ -101,7 +101,7 @@ export default function ListenAndChoose() {
 
   useEffect(() => {
     nextQuestion();
-  }, []);
+  }, [nextQuestion]);
 
   const handleListen = useCallback(() => {
     if (question) {

@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 import { BottomNav } from "@/components/BottomNav";
+
+const nunito = Nunito({
+  weight: ["400", "600", "700", "800", "900"],
+  subsets: ["latin"],
+  variable: "--font-nunito",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Kid Smart Learning - Fun English & Math Games",
@@ -15,13 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="zh-CN" className={nunito.variable}>
       <body className="font-rounded bg-white min-h-screen">
         <main className="pb-20">
           {children}

@@ -40,7 +40,7 @@ const MemoryMatch: React.FC = () => {
 
   useEffect(() => {
     initializeCards();
-  }, [currentLevel]);
+  }, [currentLevel]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const initializeCards = () => {
     const pairs = currentData.pairs;

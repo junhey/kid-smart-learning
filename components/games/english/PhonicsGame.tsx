@@ -134,7 +134,7 @@ export default function PhonicsGame() {
 
   useEffect(() => {
     nextQuestion();
-  }, []);
+  }, [nextQuestion]);
 
   const handleSelect = useCallback(
     (opt: WordItem) => {
