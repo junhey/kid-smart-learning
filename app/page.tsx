@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { GameCard } from "@/components/ui/GameCard";
 import { Button } from "@/components/ui/Button";
 
 export default function HomePage() {
   const { stars, level } = useReward();
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative overflow-hidden">
@@ -21,11 +23,11 @@ export default function HomePage() {
               left: `${10 + i * 11}%`,
               top: `${5 + (i % 3) * 30}%`,
             }}
-            animate={{
+            animate={prefersReducedMotion ? {} : {
               y: [0, -20, 0],
               rotate: [0, 10, -10, 0],
             }}
-            transition={{
+            transition={prefersReducedMotion ? {} : {
               duration: 3 + i * 0.5,
               repeat: Infinity,
               delay: i * 0.3,
@@ -95,8 +97,8 @@ export default function HomePage() {
                     <motion.span
                       key={i}
                       className="text-4xl"
-                      animate={{ y: [0, -8, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
+                      animate={prefersReducedMotion ? {} : { y: [0, -8, 0] }}
+                      transition={prefersReducedMotion ? {} : { duration: 1.5, repeat: Infinity, delay: i * 0.1 }}
                     >
                       {e}
                     </motion.span>
@@ -127,8 +129,8 @@ export default function HomePage() {
                     <motion.span
                       key={i}
                       className="text-4xl"
-                      animate={{ rotate: [0, 10, -10, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.15 }}
+                      animate={prefersReducedMotion ? {} : { rotate: [0, 10, -10, 0] }}
+                      transition={prefersReducedMotion ? {} : { duration: 2, repeat: Infinity, delay: i * 0.15 }}
                     >
                       {e}
                     </motion.span>
@@ -153,8 +155,8 @@ export default function HomePage() {
             {["🐱", "🐶", "🐸", "🦊", "🐼"].map((emoji, i) => (
               <motion.span
                 key={i}
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                animate={prefersReducedMotion ? {} : { y: [0, -10, 0] }}
+                transition={prefersReducedMotion ? {} : { duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
               >
                 {emoji}
               </motion.span>

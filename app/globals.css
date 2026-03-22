@@ -112,6 +112,32 @@ button {
   user-select: none;
 }
 
+/* Respect user's motion preferences (Accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Keep essential feedback but reduce intensity */
+  .answer-btn.correct,
+  .answer-btn.wrong {
+    animation: none !important;
+  }
+  
+  /* Disable floating decorative animations */
+  .animate-float,
+  .animate-float-up,
+  .animate-wiggle,
+  .animate-sparkle {
+    animation: none !important;
+  }
+}
+
 /* Kid-friendly button base */
 .btn-kid {
   @apply min-h-[64px] px-6 py-3 rounded-2xl font-bold text-xl shadow-lg
