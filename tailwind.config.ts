@@ -15,6 +15,7 @@ const config: Config = {
           hover: '#46A302',
           light: '#89E219',
           dark: '#3D8A00',
+          400: '#58CC02',
         },
         // Status Colors
         correct: {
@@ -41,6 +42,12 @@ const config: Config = {
       },
       fontFamily: {
         rounded: ["Nunito", "Fredoka One", "system-ui", "sans-serif"],
+        nunito: ["Nunito", "system-ui", "sans-serif"],
+        fredoka: ["Fredoka One", "system-ui", "sans-serif"],
+      },
+      boxShadow: {
+        'cartoon': '6px 6px 0px rgba(0, 0, 0, 0.1)',
+        'cartoon-lg': '8px 8px 0px rgba(0, 0, 0, 0.1)',
       },
       animation: {
         "bounce-slow": "bounce 2s infinite",
