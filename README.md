@@ -145,21 +145,39 @@ kid-smart-learning/
 
 ### Vercel (Recommended)
 
+#### 🚀 首次部署
+
 1. Push to GitHub
 2. Import project at [vercel.com/new](https://vercel.com/new)
 3. Deploy automatically!
 
-### GitHub Actions (CI/CD)
+#### ⚙️ 配置自动部署（GitHub Actions）
 
-Add these secrets to your GitHub repository:
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
+**问题**: 如果你看到 `Error: Input required and not supplied: vercel-token`
+
+**解决方案**: 需要配置 GitHub Secrets
+
+1. **运行配置助手**（推荐）:
+   ```bash
+   npm run setup:deploy
+   # 或者
+   ./scripts/setup-deployment.sh
+   ```
+
+2. **手动配置**:
+   - 查看详细指南: [DEPLOYMENT_SETUP.md](./DEPLOYMENT_SETUP.md)
+   - 获取 Vercel Token: https://vercel.com/account/tokens
+   - 添加 GitHub Secrets: https://github.com/junhey/kid-smart-learning/settings/secrets/actions
+
+3. **需要添加的 Secrets**:
+   - `VERCEL_TOKEN` - 从 Vercel Dashboard 创建
+   - `VERCEL_ORG_ID` - 运行 `vercel link` 后获取
+   - `VERCEL_PROJECT_ID` - 运行 `vercel link` 后获取
 
 The workflow in `.github/workflows/deploy.yml` will:
-- Type-check on every push
-- Build and deploy to Vercel on merge to `main`
-- Create preview deployments for PRs
+- ✅ Type-check on every push
+- ✅ Build and deploy to Vercel on merge to `main`
+- ✅ Create preview deployments for PRs
 
 ---
 
