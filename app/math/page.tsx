@@ -15,6 +15,7 @@ import { SequenceSort } from "@/components/games/math/SequenceSort";
 import MemoryMatch from "@/components/games/math/MemoryMatch";
 import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
+import { dailyTaskEvents } from "@/lib/daily-task-events";
 
 const games = [
   {
@@ -114,11 +115,16 @@ export default function MathPage() {
     ? games.find((g) => g.id === activeGame)?.component
     : null;
 
+  const handleGameComplete = () => {
+    dailyTaskEvents.emitMathGame(); // Notify task system
+    setActiveGame(null);
+  };
+
   if (ActiveGameComponent) {
     return (
       <div className="min-h-screen p-4">
-        <Navigation onBack={() => setActiveGame(null)} title="Math Games" />
-        <ActiveGameComponent onComplete={() => setActiveGame(null)} />
+        <Navigation onBack={handleGameComplete} title="Math Games" />
+        <ActiveGameComponent onComplete={handleGameComplete} />
       </div>
     );
   }

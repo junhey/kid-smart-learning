@@ -16,6 +16,7 @@ import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
 import { Button } from "@/components/ui/Button";
 import { Mascot, mascotMessages } from "@/components/Mascot";
+import { dailyTaskEvents } from "@/lib/daily-task-events";
 
 const games = [
   {
@@ -98,10 +99,15 @@ export default function EnglishPage() {
     ? games.find((g) => g.id === activeGame)?.component
     : null;
 
+  const handleGameComplete = () => {
+    dailyTaskEvents.emitEnglishGame(); // Notify task system
+    setActiveGame(null);
+  };
+
   if (ActiveGameComponent) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-        <Navigation onBack={() => setActiveGame(null)} title="英语游戏" />
+        <Navigation onBack={handleGameComplete} title="英语游戏" />
         <ActiveGameComponent />
       </div>
     );

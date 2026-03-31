@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useDailyTasks } from "@/hooks/useDailyTasks";
 
 export default function HomePage() {
   const { stars, level } = useReward();
   const prefersReducedMotion = useReducedMotion();
+  const { tasks, completedCount, totalCount, taskCompleted } = useDailyTasks();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
@@ -155,47 +157,18 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="px-4 py-2 bg-white rounded-full border border-yellow-200 shadow-sm">
-                  <span className="text-sm font-bold text-yellow-700">0/3 完成</span>
+                  <span className="text-sm font-bold text-yellow-700">
+                    {completedCount}/{totalCount} 完成
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Task List */}
             <div className="p-6 space-y-4">
-              {[
-                {
-                  emoji: "🧮",
-                  title: "数学小达人",
-                  subtitle: "完成 3 局数学游戏",
-                  xp: 150,
-                  progress: 0,
-                  total: 3,
-                  color: "from-orange-400 to-red-400",
-                  bgColor: "from-orange-50 to-red-50",
-                },
-                {
-                  emoji: "🔤",
-                  title: "英语每日练",
-                  subtitle: "完成 2 局英语游戏",
-                  xp: 100,
-                  progress: 0,
-                  total: 2,
-                  color: "from-blue-400 to-cyan-400",
-                  bgColor: "from-blue-50 to-cyan-50",
-                },
-                {
-                  emoji: "⭐",
-                  title: "完美主义者",
-                  subtitle: "获得 1 次满分",
-                  xp: 200,
-                  progress: 0,
-                  total: 1,
-                  color: "from-purple-400 to-pink-400",
-                  bgColor: "from-purple-50 to-pink-50",
-                },
-              ].map((task, i) => (
+              {tasks.map((task, i) => (
                 <motion.div
-                  key={i}
+                  key={task.id}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.6 + i * 0.1 }}
@@ -207,6 +180,17 @@ export default function HomePage() {
                   {/* Hover Glow Effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
                   
+                  {/* Completion Glow */}
+                  {task.progress >= task.total && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0.3, 0.6, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute inset-0 bg-gradient-to-r from-yellow-200/30 via-yellow-300/30 to-yellow-200/30 rounded-2xl"
+                      aria-hidden="true"
+                    />
+                  )}
+                  
                   <div className="relative flex items-center gap-4">
                     <div className={`w-14 h-14 bg-gradient-to-br ${task.color} rounded-2xl flex items-center justify-center text-3xl shadow-lg flex-shrink-0`} aria-hidden="true">
                       {task.emoji}
@@ -214,7 +198,20 @@ export default function HomePage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="font-bold text-gray-800 text-lg">{task.title}</h4>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-gray-800 text-lg">{task.title}</h4>
+                            {task.progress >= task.total && (
+                              <motion.span
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ type: "spring", bounce: 0.6 }}
+                                className="text-2xl"
+                                aria-label="已完成"
+                              >
+                                ✅
+                              </motion.span>
+                            )}
+                          </div>
                           <p className="text-sm text-gray-600">{task.subtitle}</p>
                         </div>
                         <div className="px-3 py-1 bg-white/80 rounded-full border border-yellow-200/50 shadow-sm ml-2">
@@ -236,9 +233,13 @@ export default function HomePage() {
                           aria-valuemax={task.total}
                           aria-label={`任务进度：${task.progress} / ${task.total}`}
                         >
-                          <div
-                            className={`h-full bg-gradient-to-r ${task.color} rounded-full transition-all duration-500`}
-                            style={{ width: `${(task.progress / task.total) * 100}%` }}
+                          <motion.div
+                            className={`h-full bg-gradient-to-r ${task.color} rounded-full`}
+                            initial={{ width: 0 }}
+                            animate={{ 
+                              width: `${(task.progress / task.total) * 100}%` 
+                            }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
                           />
                         </div>
                       </div>
@@ -377,6 +378,26 @@ export default function HomePage() {
           </p>
         </motion.div>
       </main>
+
+      {/* Task Completion Toast */}
+      <AnimatePresence>
+        {taskCompleted && (
+          <motion.div
+            initial={{ y: 50, opacity: 0, scale: 0.8 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -50, opacity: 0, scale: 0.8 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+          >
+            <div className="bg-gradient-to-r from-green-400 to-emerald-400 text-white px-8 py-4 rounded-2xl shadow-2xl shadow-green-500/50 border border-white/20 flex items-center gap-3">
+              <span className="text-3xl">🎉</span>
+              <div>
+                <div className="font-bold text-lg">任务完成！</div>
+                <div className="text-sm text-green-50">{taskCompleted}</div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
