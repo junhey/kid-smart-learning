@@ -685,3 +685,178 @@
 - ✅ Unit Tests: 23/23 通过
 - ⚠️ E2E Tests: 环境依赖问题（缺少 libgbm.so.1），非代码问题
 - ✅ Build: 成功，无警告
+
+## 2026-03-31 11:30 - 迭代记录 #8
+
+### ✅ 完成任务
+**数学页面加载骨架屏与浮动装饰 (Math Page Skeleton & Floating Decorations)** - 提升页面加载视觉连贯性和沉浸感
+
+### 🎯 优先级：P1 - 视觉与情感
+
+### 📋 改动详情
+
+#### 1. **components/ui/SkeletonLoader.tsx** - 新增 MathPageSkeleton
+- 🆕 导出 `MathPageSkeleton()` 组件 (60+ 行)
+- 🎨 数学主题设计：
+  - 背景渐变：`from-orange-50 via-yellow-50 to-amber-50`
+  - 9个游戏卡片骨架（3x3网格布局）
+  - 底部装饰 emoji 占位符（5个圆形）
+- ⏱️ 分层动画：
+  - 标题区：0s 延迟
+  - 卡片：0.05s 递进延迟 (i * 0.05)
+  - 总加载时长：800ms
+- 📐 布局一致性：
+  - 完全匹配真实 Math 页面结构
+  - 卡片尺寸、间距、圆角保持统一
+
+#### 2. **app/math/page.tsx** - 集成骨架屏与浮动装饰
+- ➕ 新增依赖：
+  - `import { MathPageSkeleton } from "@/components/ui/SkeletonLoader"`
+  - `import { useReducedMotion } from "@/hooks/useReducedMotion"`
+- 🔄 加载状态管理：
+  - `useState(true)` 初始化 `isLoading`
+  - `useEffect` + `setTimeout(800ms)` 模拟数据加载
+  - 条件渲染：`if (isLoading) return <MathPageSkeleton />`
+- ✨ 浮动装饰元素（6个数学符号）：
+  - Emoji: `➕` `➖` `✖️` `➗` `🔢` `🎯`
+  - 位置：分散在页面四周 (top 12-40%, left/right 5-18%)
+  - 动画：`y: [0, -20, 0]` + `rotate: [0, 10, -10, 0]`
+  - 循环时长：4-5s，递进延迟 0.2-1.0s
+  - 透明度：`opacity-15` (避免干扰内容)
+  - z-index：`pointer-events-none` + 低层级
+- ♿ 无障碍优化：
+  - 装饰元素标记 `aria-hidden="true"`
+  - 支持 `prefersReducedMotion` (禁用动画)
+- 📐 页面容器升级：
+  - 从 `<div>` 改为 `<motion.div>` (淡入动画)
+  - 新增 `relative overflow-hidden` (裁剪溢出装饰)
+  - 内容区域 `relative z-10` (确保可交互)
+
+#### 3. **动画时序优化**
+- ⏱️ 统一延迟序列：
+  - 标题：0.2s
+  - 游戏卡片：0.3s + index * 0.08s (原 0.1s)
+  - 底部水果：1.2s (原 0.6s，避免与卡片重叠)
+- 🚀 性能平衡：
+  - 骨架屏 800ms + 淡入 500ms = 1.3s 总感知延迟
+  - 视觉流畅度 > 极致速度
+
+### 📊 效果评估
+
+#### ✅ 达成目标
+1. **加载体验提升** 🚀
+   - 消除首次进入 Math 页面的空白闪烁
+   - 用户心智模型：内容"渐进式出现" vs "突然跳出"
+   - 与首页加载体验保持一致
+
+2. **视觉沉浸感增强** 🎨
+   - 6个浮动数学符号营造"数学世界"氛围
+   - 柔和的动画节奏（4-5s循环）不干扰阅读
+   - 低对比度（opacity-15）保持可读性
+
+3. **技术健壮性** 🛡️
+   - `prefersReducedMotion` 支持（遵循系统偏好）
+   - 无障碍标记（`aria-hidden`）
+   - z-index 分层（装饰 < 内容）
+
+#### 📈 前后对比
+| 维度 | 优化前 | 优化后 |
+|------|--------|--------|
+| 首次加载 | 空白 → 内容弹出 | 骨架屏 → 淡入 |
+| 视觉层次 | 平面单调 | 浮动装饰增强深度 |
+| 页面一致性 | Math 缺少过渡 | 全站统一加载体验 |
+| 动效尊重 | 无判断 | 支持 prefers-reduced-motion |
+
+### 🔧 技术要点
+
+#### React Hooks 使用
+```tsx
+// 加载状态
+const [isLoading, setIsLoading] = useState(true);
+
+// 无障碍动效判断
+const prefersReducedMotion = useReducedMotion();
+
+// 800ms 延迟（与骨架屏动画同步）
+useEffect(() => {
+  const timer = setTimeout(() => setIsLoading(false), 800);
+  return () => clearTimeout(timer);
+}, []);
+```
+
+#### Framer Motion 条件动画
+```tsx
+// 装饰元素动画（支持禁用）
+animate={prefersReducedMotion ? {} : {
+  y: [0, -20, 0],
+  rotate: [0, 10, -10, 0],
+}}
+transition={prefersReducedMotion ? {} : {
+  duration: 4 + i * 0.3,
+  repeat: Infinity,
+  delay: item.delay,
+}}
+```
+
+#### CSS 分层策略
+```tsx
+// 装饰层（不可交互）
+<div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+  {/* 浮动元素 */}
+</div>
+
+// 内容层（可交互）
+<div className="... relative z-10">
+  {/* 游戏卡片 */}
+</div>
+```
+
+### 🚀 下一步改进方向
+1. **English 页面统一** - 为 English 页面添加类似骨架屏（主题色：蓝绿紫）
+2. **预加载优化** - 首屏关键资源预取（字体、图标）
+3. **骨架屏变体** - 为不同页面类型提供专属骨架模板
+4. **性能监控** - 添加 LCP (Largest Contentful Paint) 跟踪
+
+### 📦 提交信息
+```
+feat(ux): 数学页面加载骨架屏与浮动装饰 - 提升视觉连贯性
+
+✨ 新增功能:
+- 为 Math 页面添加 MathPageSkeleton 骨架屏组件
+- 添加 6 个浮动数学符号装饰元素 (➕➖✖️➗🔢🎯)
+- 统一加载体验，与首页保持一致
+
+🎨 视觉改进:
+- 优雅的 800ms 加载过渡动画
+- 数学主题背景渐变 (orange-yellow-amber)
+- 支持减少动效偏好设置 (useReducedMotion)
+- 装饰元素平滑浮动动画 (4-5s 循环)
+
+📐 技术细节:
+- 骨架屏模拟真实布局结构 (9 个游戏卡片)
+- 分层延迟动画 (0.05s 递进)
+- z-index 层级控制，避免干扰交互
+
+🎯 体验优化:
+- 消除首次加载的空白感
+- 提升页面切换的连贯性
+- 增强沉浸式学习氛围
+```
+
+### 🔍 代码审查要点
+- [x] TypeScript 类型安全（无 any）
+- [x] 响应式布局（sm/lg 断点）
+- [x] 无障碍标记完整
+- [x] 动画性能优化（GPU 加速属性）
+- [x] 构建成功（Next.js 14.2.5 编译通过）
+
+### ⏱️ 开发耗时
+- 分析现有代码：3 分钟
+- 设计骨架屏组件：2 分钟
+- 实现浮动装饰：3 分钟
+- 集成与测试：4 分钟
+- 文档与提交：3 分钟
+- **总计：15 分钟** ✅
+
+---
+
