@@ -1,18 +1,42 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useDailyTasks } from "@/hooks/useDailyTasks";
+import { HomePageSkeleton } from "@/components/ui/SkeletonLoader";
 
 export default function HomePage() {
   const { stars, level } = useReward();
   const prefersReducedMotion = useReducedMotion();
   const { tasks, completedCount, totalCount, taskCompleted } = useDailyTasks();
+  
+  // Loading state management
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // Simulate initial data loading + allow time for animations to prep
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800); // 稍微延长一点，让骨架屏动画更自然
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // Show skeleton while loading
+  if (isLoading) {
+    return <HomePageSkeleton />;
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50"
+    >
       {/* Top Navigation Bar */}
       <nav 
         className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100/50 shadow-sm"
@@ -398,6 +422,6 @@ export default function HomePage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
