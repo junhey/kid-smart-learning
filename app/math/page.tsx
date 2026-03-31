@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NumberCount from "@/components/games/math/NumberCount";
 import AdditionGame from "@/components/games/math/AdditionGame";
 import ShapeMatch from "@/components/games/math/ShapeMatch";
@@ -16,6 +16,8 @@ import MemoryMatch from "@/components/games/math/MemoryMatch";
 import Navigation from "@/components/layout/Navigation";
 import { GameCard } from "@/components/ui/GameCard";
 import { dailyTaskEvents } from "@/lib/daily-task-events";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { MathPageSkeleton } from "@/components/ui/SkeletonLoader";
 
 const games = [
   {
@@ -110,6 +112,17 @@ const games = [
 
 export default function MathPage() {
   const [activeGame, setActiveGame] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    // Simulate initial data loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const ActiveGameComponent = activeGame
     ? games.find((g) => g.id === activeGame)?.component
@@ -119,6 +132,11 @@ export default function MathPage() {
     dailyTaskEvents.emitMathGame(); // Notify task system
     setActiveGame(null);
   };
+
+  // Show skeleton while loading
+  if (isLoading) {
+    return <MathPageSkeleton />;
+  }
 
   if (ActiveGameComponent) {
     return (
@@ -130,13 +148,48 @@ export default function MathPage() {
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 p-6 relative overflow-hidden"
+    >
+      {/* Floating decorative math elements */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        {[
+          { emoji: "➕", top: "12%", left: "8%", delay: 0 },
+          { emoji: "➖", top: "22%", right: "12%", delay: 0.2 },
+          { emoji: "✖️", top: "35%", left: "5%", delay: 0.4 },
+          { emoji: "➗", top: "18%", right: "6%", delay: 0.6 },
+          { emoji: "🔢", top: "40%", right: "18%", delay: 0.8 },
+          { emoji: "🎯", top: "28%", left: "15%", delay: 1.0 },
+        ].map((item, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-4xl opacity-15"
+            style={{ top: item.top, left: item.left, right: item.right }}
+            animate={prefersReducedMotion ? {} : {
+              y: [0, -20, 0],
+              rotate: [0, 10, -10, 0],
+            }}
+            transition={prefersReducedMotion ? {} : {
+              duration: 4 + i * 0.3,
+              repeat: Infinity,
+              delay: item.delay,
+            }}
+          >
+            {item.emoji}
+          </motion.div>
+        ))}
+      </div>
+
       <Navigation onBack={null} title="Math Games" />
 
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-8"
+        transition={{ delay: 0.2 }}
+        className="text-center mb-8 relative z-10"
       >
         <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 mb-2">
           Math Games 🔢
@@ -146,7 +199,7 @@ export default function MathPage() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto relative z-10">
         {games.map((game, index) => {
           // 为数学游戏分配variant
           const variantOptions = ['default', 'info', 'primary'] as const;
@@ -157,7 +210,7 @@ export default function MathPage() {
               key={game.id}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, type: "spring", bounce: 0.4 }}
+              transition={{ delay: 0.3 + index * 0.08, type: "spring", bounce: 0.4 }}
               onClick={() => setActiveGame(game.id)}
             >
               <GameCard
@@ -183,19 +236,23 @@ export default function MathPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="text-center mt-10 flex justify-center gap-4 text-4xl"
+        transition={{ delay: 1.2 }}
+        className="text-center mt-10 flex justify-center gap-4 text-4xl relative z-10"
       >
         {["🍎", "🍊", "🍋", "🍇", "🍓"].map((emoji, i) => (
           <motion.span
             key={i}
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
+            animate={prefersReducedMotion ? {} : { y: [0, -8, 0] }}
+            transition={prefersReducedMotion ? {} : { 
+              duration: 1.5, 
+              repeat: Infinity, 
+              delay: i * 0.3 
+            }}
           >
             {emoji}
           </motion.span>
         ))}
       </motion.div>
-    </div>
+    </motion.div>
   );
 }

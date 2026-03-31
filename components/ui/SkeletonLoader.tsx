@@ -31,6 +31,63 @@ export function SkeletonLoader({ className = "" }: SkeletonLoaderProps) {
 }
 
 /**
+ * 数学页面加载骨架屏组件
+ */
+export function MathPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 p-6">
+      {/* Navigation Skeleton */}
+      <div className="mb-6">
+        <SkeletonLoader className="w-32 h-10 rounded-2xl" />
+      </div>
+
+      {/* Title Section Skeleton */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="text-center mb-8"
+      >
+        <SkeletonLoader className="h-14 w-3/5 mx-auto rounded-2xl mb-4" />
+        <SkeletonLoader className="h-7 w-2/5 mx-auto rounded-xl" />
+      </motion.div>
+
+      {/* Game Grid Skeleton */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+            className="bg-white rounded-3xl border border-gray-200/50 shadow-lg overflow-hidden"
+          >
+            {/* Card Header */}
+            <div className="bg-gradient-to-r from-gray-200 to-gray-300 p-6">
+              <SkeletonLoader className="w-16 h-16 rounded-2xl mx-auto mb-3" />
+              <SkeletonLoader className="h-6 w-3/4 mx-auto rounded-lg mb-2" />
+              <SkeletonLoader className="h-4 w-full rounded-lg" />
+            </div>
+            
+            {/* Card Body */}
+            <div className="p-4">
+              <SkeletonLoader className="h-10 w-full rounded-xl" />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Bottom Decoration Skeleton */}
+      <div className="text-center mt-10 flex justify-center gap-4">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <SkeletonLoader key={i} className="w-10 h-10 rounded-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
  * 首页加载骨架屏组件
  */
 export function HomePageSkeleton() {
