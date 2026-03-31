@@ -12,7 +12,11 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50">
       {/* Top Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100/50 shadow-sm">
+      <nav 
+        className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100/50 shadow-sm"
+        role="navigation"
+        aria-label="主导航栏"
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -27,19 +31,19 @@ export default function HomePage() {
             </div>
 
             {/* Stats */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4" role="status" aria-label="用户统计信息">
               <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-100 to-amber-100 rounded-full border border-yellow-200/50 shadow-sm">
-                <span className="text-xl">⭐</span>
+                <span className="text-xl" aria-hidden="true">⭐</span>
                 <div className="text-left">
                   <div className="text-xs text-amber-600 font-medium">Stars</div>
-                  <div className="text-sm font-bold text-amber-700">{stars}</div>
+                  <div className="text-sm font-bold text-amber-700" aria-label={`${stars} 颗星星`}>{stars}</div>
                 </div>
               </div>
               <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full border border-purple-200/50 shadow-sm">
-                <span className="text-xl">🏆</span>
+                <span className="text-xl" aria-hidden="true">🏆</span>
                 <div className="text-left">
                   <div className="text-xs text-purple-600 font-medium">Level</div>
-                  <div className="text-sm font-bold text-purple-700">{level}</div>
+                  <div className="text-sm font-bold text-purple-700" aria-label={`等级 ${level}`}>{level}</div>
                 </div>
               </div>
             </div>
@@ -48,9 +52,12 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section with Decorative Elements */}
-      <section className="relative pt-12 pb-8 px-4 overflow-hidden">
+      <section 
+        className="relative pt-12 pb-8 px-4 overflow-hidden"
+        aria-labelledby="hero-title"
+      >
         {/* Floating decorative elements */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           {[
             { emoji: "✨", top: "15%", left: "10%", delay: 0 },
             { emoji: "🌟", top: "25%", right: "15%", delay: 0.2 },
@@ -84,6 +91,7 @@ export default function HomePage() {
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", bounce: 0.5, duration: 0.8 }}
             className="inline-flex items-center justify-center mb-6"
+            aria-hidden="true"
           >
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-pink-400 via-purple-400 to-blue-400 rounded-full blur-xl opacity-40 animate-pulse" />
@@ -99,7 +107,10 @@ export default function HomePage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <h2 className="text-5xl md:text-6xl font-black mb-4">
+            <h2 
+              id="hero-title"
+              className="text-5xl md:text-6xl font-black mb-4"
+            >
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-transparent bg-clip-text">
                 欢迎来到学习乐园
               </span>
@@ -112,13 +123,18 @@ export default function HomePage() {
       </section>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <main 
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20"
+        role="main"
+      >
         {/* Daily Tasks Card */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="mb-12"
+          role="region"
+          aria-labelledby="daily-tasks-title"
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl border border-gray-100/50 shadow-xl shadow-purple-100/50 overflow-hidden">
             {/* Card Header */}
@@ -129,7 +145,12 @@ export default function HomePage() {
                     📋
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-800">今日任务</h3>
+                    <h3 
+                      id="daily-tasks-title"
+                      className="text-xl font-bold text-gray-800"
+                    >
+                      今日任务
+                    </h3>
                     <p className="text-sm text-gray-600">Daily Challenges</p>
                   </div>
                 </div>
@@ -178,13 +199,16 @@ export default function HomePage() {
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.6 + i * 0.1 }}
-                  className={`group relative bg-gradient-to-r ${task.bgColor} rounded-2xl border border-gray-100/50 p-5 hover:shadow-lg transition-all duration-300 cursor-pointer overflow-hidden`}
+                  className={`group relative bg-gradient-to-r ${task.bgColor} rounded-2xl border border-gray-100/50 p-5 hover:shadow-lg focus-within:ring-4 focus-within:ring-purple-400/30 transition-all duration-300 cursor-pointer overflow-hidden`}
+                  role="article"
+                  aria-label={`任务：${task.title}，${task.subtitle}，进度 ${task.progress}/${task.total}`}
+                  tabIndex={0}
                 >
                   {/* Hover Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
                   
                   <div className="relative flex items-center gap-4">
-                    <div className={`w-14 h-14 bg-gradient-to-br ${task.color} rounded-2xl flex items-center justify-center text-3xl shadow-lg flex-shrink-0`}>
+                    <div className={`w-14 h-14 bg-gradient-to-br ${task.color} rounded-2xl flex items-center justify-center text-3xl shadow-lg flex-shrink-0`} aria-hidden="true">
                       {task.emoji}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -204,7 +228,14 @@ export default function HomePage() {
                             {task.progress}/{task.total}
                           </span>
                         </div>
-                        <div className="h-2.5 bg-white/60 rounded-full overflow-hidden border border-gray-200/30">
+                        <div 
+                          className="h-2.5 bg-white/60 rounded-full overflow-hidden border border-gray-200/30"
+                          role="progressbar"
+                          aria-valuenow={task.progress}
+                          aria-valuemin={0}
+                          aria-valuemax={task.total}
+                          aria-label={`任务进度：${task.progress} / ${task.total}`}
+                        >
                           <div
                             className={`h-full bg-gradient-to-r ${task.color} rounded-full transition-all duration-500`}
                             style={{ width: `${(task.progress / task.total) * 100}%` }}
@@ -220,7 +251,11 @@ export default function HomePage() {
         </motion.section>
 
         {/* Game Worlds Grid */}
-        <section className="grid md:grid-cols-2 gap-6 mb-8">
+        <section 
+          className="grid md:grid-cols-2 gap-6 mb-8"
+          role="region"
+          aria-label="游戏世界选择"
+        >
           {/* Math World */}
           <motion.div
             initial={{ y: 40, opacity: 0 }}
@@ -229,13 +264,14 @@ export default function HomePage() {
           >
             <Link
               href="/math"
-              className="group block bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 rounded-3xl border border-orange-200/50 shadow-xl shadow-orange-100/50 overflow-hidden hover:shadow-2xl hover:shadow-orange-200/50 transition-all duration-300 h-full"
+              className="group block bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 rounded-3xl border border-orange-200/50 shadow-xl shadow-orange-100/50 overflow-hidden hover:shadow-2xl hover:shadow-orange-200/50 focus:ring-4 focus:ring-orange-400/50 focus:outline-none transition-all duration-300 h-full"
+              aria-label="进入数学世界，练习加减乘除"
             >
               {/* Card Header with gradient */}
               <div className="relative bg-gradient-to-r from-orange-400 to-red-400 px-6 py-8 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" aria-hidden="true" />
                 <div className="relative flex items-center gap-4">
-                  <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-5xl shadow-2xl shadow-orange-600/30 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-5xl shadow-2xl shadow-orange-600/30 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
                     🧮
                   </div>
                   <div className="text-white">
@@ -282,13 +318,14 @@ export default function HomePage() {
           >
             <Link
               href="/english"
-              className="group block bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50 rounded-3xl border border-blue-200/50 shadow-xl shadow-blue-100/50 overflow-hidden hover:shadow-2xl hover:shadow-blue-200/50 transition-all duration-300 h-full"
+              className="group block bg-gradient-to-br from-blue-50 via-cyan-50 to-purple-50 rounded-3xl border border-blue-200/50 shadow-xl shadow-blue-100/50 overflow-hidden hover:shadow-2xl hover:shadow-blue-200/50 focus:ring-4 focus:ring-blue-400/50 focus:outline-none transition-all duration-300 h-full"
+              aria-label="进入英语世界，学习英文单词"
             >
               {/* Card Header with gradient */}
               <div className="relative bg-gradient-to-r from-blue-400 to-cyan-400 px-6 py-8 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" aria-hidden="true" />
                 <div className="relative flex items-center gap-4">
-                  <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-5xl shadow-2xl shadow-blue-600/30 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-5xl shadow-2xl shadow-blue-600/30 group-hover:scale-110 transition-transform duration-300" aria-hidden="true">
                     🔤
                   </div>
                   <div className="text-white">
