@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import { BottomNav } from "@/components/BottomNav";
 import { DailyTasksProvider } from "@/contexts/DailyTasksContext";
+import { SoundSettings } from "@/components/ui/SoundSettings";
 
 const nunito = Nunito({
   weight: ["400", "600", "700", "800", "900"],
@@ -31,6 +32,7 @@ export default function RootLayout({
             {children}
           </main>
           <BottomNav />
+          <SoundSettings />
         </DailyTasksProvider>
       </body>
     </html>

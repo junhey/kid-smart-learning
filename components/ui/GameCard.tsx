@@ -7,6 +7,7 @@
 "use client";
 
 import { KeyboardEvent, useState, useRef, useEffect } from 'react';
+import { soundFeedback } from '@/lib/sound-feedback';
 
 interface GameCardProps {
   title: string;
@@ -53,6 +54,9 @@ export function GameCard({
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
 
+    // 播放点击音效
+    soundFeedback.play('click');
+
     // Create ripple effect
     const card = cardRef.current;
     if (card) {
@@ -78,6 +82,9 @@ export function GameCard({
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (onClick && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault();
+      
+      // 播放点击音效
+      soundFeedback.play('click');
       
       // Create ripple at center for keyboard activation
       const card = cardRef.current;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { soundFeedback } from "@/lib/sound-feedback";
 
 export interface RewardState {
   stars: number;
@@ -61,6 +62,9 @@ export function useReward() {
 
   const addStar = useCallback(
     (count = 1) => {
+      // 播放获得星星音效
+      soundFeedback.play('star');
+      
       setState((prev) => {
         const newStars = prev.stars + count;
         const newStreak = prev.streak + 1;
@@ -96,6 +100,8 @@ export function useReward() {
 
         if (achievement) {
           setNewAchievement(achievement);
+          // 播放完成任务音效
+          soundFeedback.play('complete');
           setTimeout(() => setNewAchievement(null), 3000);
         }
 
@@ -130,6 +136,8 @@ export function useReward() {
         // ignore
       }
       setNewAchievement("Perfect Round! 🏆");
+      // 播放完成任务音效
+      soundFeedback.play('complete');
       setTimeout(() => setNewAchievement(null), 3000);
       return next;
     });

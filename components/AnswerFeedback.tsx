@@ -1,11 +1,12 @@
 /**
- * AnswerFeedback Component - Enhanced answer feedback with animations
+ * AnswerFeedback Component - Enhanced answer feedback with animations and sound
  */
 
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { soundFeedback } from '@/lib/sound-feedback';
 
 interface AnswerFeedbackProps {
   isCorrect: boolean | null; // null = not answered yet
@@ -22,6 +23,9 @@ export function AnswerFeedback({
 
   useEffect(() => {
     if (isCorrect !== null) {
+      // 播放对应音效
+      soundFeedback.play(isCorrect ? 'correct' : 'wrong');
+      
       setShow(true);
       const timer = setTimeout(() => {
         setShow(false);
