@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useReward } from "@/hooks/useReward";
 import { useSound } from "@/hooks/useSound";
@@ -94,6 +94,25 @@ export default function NumberCount() {
     nextQuestion();
   };
 
+  // Keyboard shortcut support: 1-4 keys to select options
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (gameOver || selected !== null) return;
+      
+      const key = e.key;
+      const keyNum = parseInt(key);
+      
+      // Check if pressed key is 1-4 and within available options
+      if (keyNum >= 1 && keyNum <= 4 && keyNum <= question.options.length) {
+        const selectedNum = question.options[keyNum - 1];
+        handleSelect(selectedNum);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [gameOver, selected, question.options, handleSelect]);
+
   if (gameOver) {
     return (
       <GameResult
@@ -165,9 +184,17 @@ export default function NumberCount() {
         animate={{ opacity: 1, y: 0 }}
         className="mt-6"
       >
-        <p className="text-center text-2xl font-black text-gray-700 mb-4">
-          How many {question.emoji}?
-        </p>
+        <div className="text-center mb-4">
+          <p className="text-2xl font-black text-gray-700">
+            How many {question.emoji}?
+          </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Press <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">1</kbd>{" "}
+            <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">2</kbd>{" "}
+            <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">3</kbd>{" "}
+            <kbd className="px-2 py-1 bg-gray-200 rounded text-xs font-mono">4</kbd> or click to answer
+          </p>
+        </div>
 
         {/* Emoji display */}
         <div className="bg-white rounded-3xl p-6 shadow-xl mb-6 min-h-32 flex flex-wrap gap-2 justify-center items-center">
@@ -195,9 +222,10 @@ export default function NumberCount() {
             times: [0, 0.2, 0.4, 0.6, 0.8, 1]
           } : {}}
         >
-          {question.options.map((num) => {
+          {question.options.map((num, index) => {
             const isCorrect = num === question.count;
             const isSelected = selected === num;
+            const keyboardShortcut = index + 1;
 
             return (
               <AnimatedButton
@@ -212,13 +240,18 @@ export default function NumberCount() {
                 size="lg"
                 onClick={() => handleSelect(num)}
                 disabled={selected !== null}
-                className={`text-4xl font-black h-24 ${
+                className={`text-4xl font-black h-24 relative ${
                   isSelected && isCorrect ? "ring-4 ring-green-300" : ""
                 } ${
                   isSelected && !isCorrect ? "ring-4 ring-red-300" : ""
                 }`}
                 playSound={false}
+                aria-label={`Answer ${num}, press ${keyboardShortcut} on keyboard`}
               >
+                {/* Keyboard hint badge */}
+                <span className="absolute top-2 left-2 w-6 h-6 bg-purple-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">
+                  {keyboardShortcut}
+                </span>
                 {num}
               </AnimatedButton>
             );
