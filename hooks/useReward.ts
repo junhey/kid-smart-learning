@@ -18,6 +18,17 @@ export interface RewardState {
 
 const STORAGE_KEY = "kid-smart-reward";
 
+// Custom event for level-up detection (used by LevelUpContext)
+export const LEVEL_UP_EVENT = 'kid-smart-level-up';
+
+function emitLevelUp(newLevel: number) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent(LEVEL_UP_EVENT, { detail: { level: newLevel } })
+    );
+  }
+}
+
 const defaultState: RewardState = {
   stars: 0,
   level: 1,
@@ -81,6 +92,11 @@ export function useReward() {
         if (!achievements.streak10 && newStreak >= 10) {
           achievements.streak10 = true;
           achievement = "10 Streak! 🔥";
+        }
+
+        // Detect level-up and emit event
+        if (newLevel > prev.level) {
+          emitLevelUp(newLevel);
         }
 
         const next: RewardState = {

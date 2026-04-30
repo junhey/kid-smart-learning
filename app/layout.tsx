@@ -3,6 +3,7 @@ import { Nunito } from "next/font/google";
 import "./globals.css";
 import { BottomNav } from "@/components/BottomNav";
 import { DailyTasksProvider } from "@/contexts/DailyTasksContext";
+import { LevelUpProvider } from "@/contexts/LevelUpContext";
 import { SoundSettings } from "@/components/ui/SoundSettings";
 
 const nunito = Nunito({
@@ -28,11 +29,13 @@ export default function RootLayout({
     <html lang="zh-CN" className={nunito.variable}>
       <body className="font-rounded bg-white min-h-screen">
         <DailyTasksProvider>
-          <main className="pb-20">
-            {children}
-          </main>
-          <BottomNav />
-          <SoundSettings />
+          <LevelUpProvider>
+            <main className="pb-20">
+              {children}
+            </main>
+            <BottomNav />
+            <SoundSettings />
+          </LevelUpProvider>
         </DailyTasksProvider>
       </body>
     </html>
