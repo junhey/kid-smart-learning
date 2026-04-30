@@ -274,6 +274,7 @@ export default function ClockGame() {
           correct={correct}
           total={TOTAL_ROUNDS}
           onRestart={restart}
+          gameName="认时钟"
           onBack={function() {
             // 实际项目中会导航到主菜单
             window.location.href = "/play";

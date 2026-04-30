@@ -154,6 +154,7 @@ export default function AdditionGame() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={() => window.history.back()}
+      gameName="加法计算"
       />
     );
   }

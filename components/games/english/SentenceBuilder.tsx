@@ -122,6 +122,7 @@ export default function SentenceBuilder() {
           nextSentence();
         }}
         onBack={() => window.location.href = '/'}
+        gameName="造句子"
       />
     );
   }

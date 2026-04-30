@@ -140,6 +140,7 @@ export default function AntonymsMatch() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={handleBack}
+      gameName="反义词配对"
       />
     );
   }

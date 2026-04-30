@@ -186,6 +186,7 @@ export default function PhonicsGame() {
           setToastMessage("");
           nextQuestion();
         }}
+        gameName="自然拼读"
         onBack={() => window.history.back()}
       />
     );

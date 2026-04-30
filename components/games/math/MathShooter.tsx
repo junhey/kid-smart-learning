@@ -142,6 +142,7 @@ export default function MathShooter() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={() => window.history.back()}
+      gameName="数学射击"
       />
     );
   }

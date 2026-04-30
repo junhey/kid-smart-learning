@@ -120,6 +120,7 @@ export default function NumberCount() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={() => window.history.back()}
+      gameName="数数游戏"
       />
     );
   }

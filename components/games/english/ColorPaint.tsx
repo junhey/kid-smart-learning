@@ -113,6 +113,7 @@ export default function ColorPaint() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={handleBack}
+      gameName="颜色涂鸦"
       />
     );
   }

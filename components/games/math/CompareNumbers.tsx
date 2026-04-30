@@ -106,6 +106,7 @@ export default function CompareNumbers() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={() => window.history.back()}
+      gameName="比大小"
       />
     );
   }

@@ -165,6 +165,7 @@ export default function ListenAndChoose() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={handleBack}
+      gameName="听力选择"
       />
     );
   }

@@ -182,7 +182,7 @@ export default function ShapeCount() {
   };
 
   if (gameOver) {
-    return <GameResult correct={correct} total={total} onRestart={handleRestart} onBack={handleBack} />;
+    return <GameResult correct={correct} total={total} onRestart={handleRestart} onBack={handleBack} gameName="数形状" />;
   }
 
   return (

@@ -186,7 +186,7 @@ export default function ShapeMatch() {
   }, []);
 
   if (gameOver) {
-    return <GameResult correct={correct} total={total} onRestart={handleRestart} onBack={handleBack} />;
+    return <GameResult correct={correct} total={total} onRestart={handleRestart} onBack={handleBack} gameName="形状匹配" />;
   }
 
   return (

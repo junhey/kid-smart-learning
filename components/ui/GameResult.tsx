@@ -5,12 +5,14 @@ import { useEffect, useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import { colors, shadows, borderRadius, animations } from "@/lib/design-tokens";
 import { playPerfectResult, playGoodResult, playFairResult } from "@/lib/game-sounds";
+import { ShareButton } from "@/components/ui/ShareButton";
 
 interface GameResultProps {
   correct: number;
   total: number;
   onRestart: () => void;
   onBack: () => void;
+  gameName?: string;
 }
 
 interface Ripple {
@@ -24,6 +26,7 @@ export default function GameResult({
   total,
   onRestart,
   onBack,
+  gameName,
 }: GameResultProps) {
   const accuracy = Math.round((correct / total) * 100);
   const isPerfect = correct === total;
@@ -247,12 +250,22 @@ export default function GameResult({
           </motion.div>
         </motion.div>
 
+        {/* Share Button */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mb-3"
+        >
+          <ShareButton correct={correct} total={total} gameName={gameName} />
+        </motion.div>
+
         {/* Buttons */}
         <motion.div
           className="flex gap-3"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.6 }}
         >
           <button
             ref={restartButtonRef}

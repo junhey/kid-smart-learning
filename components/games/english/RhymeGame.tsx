@@ -240,6 +240,7 @@ export default function RhymeGame() {
             total={total}
             onRestart={handleRestart}
             onBack={handleBack}
+          gameName="押韵游戏"
           />
         )}
       </div>

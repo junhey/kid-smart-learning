@@ -150,6 +150,7 @@ export default function AlphabetBalloon() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={() => window.history.back()}
+      gameName="字母气球"
       />
     );
   }

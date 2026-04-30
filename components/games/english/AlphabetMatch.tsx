@@ -161,6 +161,7 @@ export default function AlphabetMatch() {
         total={TOTAL_ROUNDS}
         onRestart={handleRestart}
         onBack={handleBack}
+      gameName="字母配对"
       />
     );
   }

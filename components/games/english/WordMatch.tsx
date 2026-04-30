@@ -165,6 +165,7 @@ export default function WordMatch() {
           nextQuestion();
         }}
         onBack={() => window.location.href = "/"}
+        gameName="单词配对"
       />
     );
   }
