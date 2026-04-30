@@ -13,9 +13,10 @@
 
 "use client";
 
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import confetti from "canvas-confetti";
 
 interface DayActivity {
   day: string;      // Mon, Tue, etc.
@@ -74,20 +75,40 @@ function saveWeeklyState(state: WeeklyState) {
   }
 }
 
+const PERFECT_WEEK_KEY = "kid-smart-weekly-perfect-celebrated";
+
 export function WeeklyProgress() {
   const prefersReducedMotion = useReducedMotion();
   const [state, setState] = useState<WeeklyState>({
     weekStart: getWeekStart(),
     activeDays: [false, false, false, false, false, false, false],
   });
+  const [showPerfectWeek, setShowPerfectWeek] = useState(false);
+  const confettiTriggered = useRef(false);
 
   useEffect(() => {
     const loaded = loadWeeklyState();
     // Mark today as active
     const todayIndex = getTodayDayIndex();
+    const wasPerfectBefore = loaded.activeDays.every(Boolean);
     loaded.activeDays[todayIndex] = true;
     saveWeeklyState(loaded);
     setState(loaded);
+
+    // Check if this completes a perfect week (all 7 days)
+    const isPerfectNow = loaded.activeDays.every(Boolean);
+    if (isPerfectNow && !wasPerfectBefore) {
+      // First time achieving perfect week this session
+      const celebratedKey = `${PERFECT_WEEK_KEY}-${loaded.weekStart}`;
+      const alreadyCelebrated = localStorage.getItem(celebratedKey);
+      if (!alreadyCelebrated) {
+        localStorage.setItem(celebratedKey, "true");
+        setShowPerfectWeek(true);
+      }
+    } else if (isPerfectNow) {
+      // Already perfect, show the "perfect" styling without animation
+      setShowPerfectWeek(true);
+    }
   }, []);
 
   const dayLabels: DayActivity[] = [
@@ -110,6 +131,49 @@ export function WeeklyProgress() {
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
 
+  // Trigger confetti burst for perfect week
+  useEffect(() => {
+    if (showPerfectWeek && activeDayCount === 7 && !prefersReducedMotion && !confettiTriggered.current) {
+      confettiTriggered.current = true;
+      // Delay slightly for visual impact
+      const timer = setTimeout(() => {
+        // Golden confetti burst from center
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6, x: 0.5 },
+          colors: ["#FFD700", "#FFA500", "#FF6B6B", "#A78BFA", "#58CC02"],
+          ticks: 100,
+          gravity: 1.2,
+          scalar: 0.9,
+          shapes: ["star", "circle"],
+        });
+        // Second burst after short delay
+        setTimeout(() => {
+          confetti({
+            particleCount: 40,
+            spread: 100,
+            origin: { y: 0.55, x: 0.3 },
+            colors: ["#FFD700", "#FFE066", "#81C784"],
+            ticks: 80,
+            gravity: 1.0,
+            scalar: 0.8,
+          });
+          confetti({
+            particleCount: 40,
+            spread: 100,
+            origin: { y: 0.55, x: 0.7 },
+            colors: ["#FF66C4", "#4DD0E1", "#A78BFA"],
+            ticks: 80,
+            gravity: 1.0,
+            scalar: 0.8,
+          });
+        }, 300);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [showPerfectWeek, activeDayCount, prefersReducedMotion]);
+
   // Encouraging messages
   const getMessage = () => {
     if (activeDayCount >= 7) return { text: "完美一周！", emoji: "🏆" };
@@ -120,31 +184,67 @@ export function WeeklyProgress() {
   };
 
   const msg = getMessage();
+  const isPerfect = activeDayCount === 7;
 
   return (
     <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.45, type: "spring", bounce: 0.3 }}
-      className="bg-white/80 backdrop-blur-sm rounded-3xl border border-indigo-100/50 shadow-xl shadow-indigo-100/30 overflow-hidden"
+      className={`backdrop-blur-sm rounded-3xl border shadow-xl overflow-hidden relative ${
+        isPerfect
+          ? "bg-gradient-to-br from-yellow-50/90 via-amber-50/90 to-orange-50/90 border-yellow-300/60 shadow-yellow-200/40"
+          : "bg-white/80 border-indigo-100/50 shadow-indigo-100/30"
+      }`}
       role="region"
       aria-labelledby="weekly-progress-title"
     >
+      {/* Perfect week shimmer overlay */}
+      {isPerfect && !prefersReducedMotion && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none z-0"
+          aria-hidden="true"
+        >
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-200/40 to-transparent"
+            animate={{ x: ["-100%", "200%"] }}
+            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: "easeInOut" }}
+          />
+        </motion.div>
+      )}
+
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-100 via-purple-100 to-violet-100 px-6 py-3 border-b border-indigo-100/50">
+      <div className={`px-6 py-3 border-b relative z-10 ${
+        isPerfect
+          ? "bg-gradient-to-r from-yellow-200/80 via-amber-200/80 to-orange-200/80 border-yellow-200/50"
+          : "bg-gradient-to-r from-indigo-100 via-purple-100 to-violet-100 border-indigo-100/50"
+      }`}>
         <div className="flex items-center gap-2">
-          <span className="text-lg" aria-hidden="true">📊</span>
-          <h3 id="weekly-progress-title" className="text-sm font-bold text-indigo-700">
-            本周学习
+          <motion.span
+            className="text-lg"
+            aria-hidden="true"
+            animate={isPerfect && !prefersReducedMotion ? { rotate: [0, -10, 10, 0], scale: [1, 1.2, 1] } : {}}
+            transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
+          >
+            {isPerfect ? "🏆" : "📊"}
+          </motion.span>
+          <h3 id="weekly-progress-title" className={`text-sm font-bold ${
+            isPerfect ? "text-amber-700" : "text-indigo-700"
+          }`}>
+            {isPerfect ? "完美一周！" : "本周学习"}
           </h3>
-          <span className="ml-auto text-xs font-medium text-indigo-500 bg-white/60 px-2 py-0.5 rounded-full">
-            {activeDayCount}/7 天
+          <span className={`ml-auto text-xs font-medium px-2 py-0.5 rounded-full ${
+            isPerfect
+              ? "text-amber-700 bg-yellow-100/80 border border-yellow-300/50"
+              : "text-indigo-500 bg-white/60"
+          }`}>
+            {isPerfect ? "7/7 ✨" : `${activeDayCount}/7 天`}
           </span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-5 flex items-center gap-5">
+      <div className="p-5 flex items-center gap-5 relative z-10">
         {/* Circular Progress Ring */}
         <div className="relative flex-shrink-0" aria-hidden="true">
           <svg
@@ -159,7 +259,7 @@ export function WeeklyProgress() {
               cy={size / 2}
               r={radius}
               fill="none"
-              stroke="#E8E5FF"
+              stroke={isPerfect ? "#FDE68A" : "#E8E5FF"}
               strokeWidth={strokeWidth}
               strokeLinecap="round"
             />
@@ -169,7 +269,7 @@ export function WeeklyProgress() {
               cy={size / 2}
               r={radius}
               fill="none"
-              stroke="url(#weeklyGradient)"
+              stroke={isPerfect ? "url(#weeklyGradientPerfect)" : "url(#weeklyGradient)"}
               strokeWidth={strokeWidth}
               strokeLinecap="round"
               strokeDasharray={circumference}
@@ -181,12 +281,17 @@ export function WeeklyProgress() {
                 delay: 0.6,
               }}
             />
-            {/* Gradient definition */}
+            {/* Gradient definitions */}
             <defs>
               <linearGradient id="weeklyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#818CF8" />
                 <stop offset="50%" stopColor="#A78BFA" />
                 <stop offset="100%" stopColor="#C084FC" />
+              </linearGradient>
+              <linearGradient id="weeklyGradientPerfect" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#F59E0B" />
+                <stop offset="50%" stopColor="#EF4444" />
+                <stop offset="100%" stopColor="#EC4899" />
               </linearGradient>
             </defs>
           </svg>
@@ -195,22 +300,44 @@ export function WeeklyProgress() {
             <motion.span
               className="text-2xl"
               initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 1.0, type: "spring", bounce: 0.5 }}
+              animate={isPerfect && !prefersReducedMotion
+                ? { scale: [0, 1.3, 1], rotate: [0, -10, 10, 0] }
+                : { scale: 1 }
+              }
+              transition={isPerfect
+                ? { delay: 1.0, duration: 0.8, ease: "easeOut" }
+                : { delay: 1.0, type: "spring", bounce: 0.5 }
+              }
             >
               {msg.emoji}
             </motion.span>
           </div>
+          {/* Perfect week outer glow ring */}
+          {isPerfect && !prefersReducedMotion && (
+            <motion.div
+              className="absolute inset-[-4px] rounded-full border-2 border-dashed border-yellow-400/60"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+              aria-hidden="true"
+            />
+          )}
         </div>
 
         {/* Right side: day indicators + message */}
         <div className="flex-1 min-w-0">
           {/* Motivational text */}
-          <p className="text-base font-bold text-gray-800 mb-1">
-            {msg.text}
+          <p className={`text-base font-bold mb-1 ${
+            isPerfect ? "text-amber-800" : "text-gray-800"
+          }`}>
+            {isPerfect ? "🌟 完美一周！" : msg.text}
           </p>
-          <p className="text-xs text-gray-500 mb-3">
-            这周已学习 {activeDayCount} 天{activeDayCount < 7 ? `，还差 ${7 - activeDayCount} 天就能集齐啦` : "，你是最棒的！"}
+          <p className={`text-xs mb-3 ${
+            isPerfect ? "text-amber-600" : "text-gray-500"
+          }`}>
+            {isPerfect
+              ? "连续学习7天，你是超级学霸！🎉"
+              : `这周已学习 ${activeDayCount} 天${activeDayCount < 7 ? `，还差 ${7 - activeDayCount} 天就能集齐啦` : "，你是最棒的！"}`
+            }
           </p>
 
           {/* Day dots */}
@@ -234,13 +361,15 @@ export function WeeklyProgress() {
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all
                     ${day.active
-                      ? "bg-gradient-to-br from-indigo-400 to-purple-500 text-white shadow-md shadow-indigo-200"
+                      ? isPerfect
+                        ? "bg-gradient-to-br from-yellow-400 to-orange-500 text-white shadow-md shadow-yellow-200"
+                        : "bg-gradient-to-br from-indigo-400 to-purple-500 text-white shadow-md shadow-indigo-200"
                       : "bg-gray-100 text-gray-400 border border-gray-200/50"
                     }
                     ${i === getTodayDayIndex() && !day.active ? "ring-2 ring-indigo-300 ring-offset-1" : ""}
                   `}
                 >
-                  {day.active ? "✓" : day.label}
+                  {day.active ? (isPerfect ? "⭐" : "✓") : day.label}
                 </div>
               </motion.div>
             ))}
