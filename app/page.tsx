@@ -7,6 +7,7 @@ import { useReward } from "@/hooks/useReward";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useDailyTasks } from "@/hooks/useDailyTasks";
 import { HomePageSkeleton } from "@/components/ui/SkeletonLoader";
+import { StreakBadge } from "@/components/ui/StreakBadge";
 
 export default function HomePage() {
   const { stars, level } = useReward();
@@ -57,7 +58,8 @@ export default function HomePage() {
             </div>
 
             {/* Stats */}
-            <div className="flex items-center gap-4" role="status" aria-label="用户统计信息">
+            <div className="flex items-center gap-3" role="status" aria-label="用户统计信息">
+              <StreakBadge />
               <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-100 to-amber-100 rounded-full border border-yellow-200/50 shadow-sm">
                 <span className="text-xl" aria-hidden="true">⭐</span>
                 <div className="text-left">
@@ -153,6 +155,16 @@ export default function HomePage() {
         className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20"
         role="main"
       >
+        {/* Streak Card */}
+        <motion.section
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mb-8"
+        >
+          <StreakBadge expanded />
+        </motion.section>
+
         {/* Daily Tasks Card */}
         <motion.section
           initial={{ y: 30, opacity: 0 }}
