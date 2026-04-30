@@ -8,6 +8,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useDailyTasks } from "@/hooks/useDailyTasks";
 import { HomePageSkeleton } from "@/components/ui/SkeletonLoader";
 import { StreakBadge } from "@/components/ui/StreakBadge";
+import { WeeklyProgress } from "@/components/ui/WeeklyProgress";
 
 export default function HomePage() {
   const { stars, level } = useReward();
@@ -163,6 +164,16 @@ export default function HomePage() {
           className="mb-8"
         >
           <StreakBadge expanded />
+        </motion.section>
+
+        {/* Weekly Progress Card */}
+        <motion.section
+          initial={{ y: 30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.45 }}
+          className="mb-8"
+        >
+          <WeeklyProgress />
         </motion.section>
 
         {/* Daily Tasks Card */}
